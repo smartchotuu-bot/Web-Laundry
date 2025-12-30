@@ -1950,6 +1950,12 @@
                 var auth = firebase.auth();
                 var db = firebase.database();
                 var provider = new firebase.auth.GoogleAuthProvider();
+
+                // --- AUTH CONFIGURATION ---
+                // Force account selection prompt
+                provider.setCustomParameters({ prompt: 'select_account' });
+                // Use device language for the login flow
+                auth.useDeviceLanguage();
             } else {
                 console.error("Firebase SDK not loaded");
                 alert("Error loading app resources. Please check internet connection.");
@@ -2497,9 +2503,18 @@
                     console.error("Error loading products:", error);
                 });
             },
-            navTo(screen) {
+            navTo(screen, pushState = true) {
                 // Select the bottom navigation bar within the home view
                 const bottomNav = document.querySelector('#view-home .bottom-nav');
+
+                // Track sub-view change
+                if (pushState) {
+                    historyManager.pushState({
+                        view: 'home',
+                        subView: screen === 'home' ? 'products' : 'cart',
+                        tab: this.data.activeTab
+                    });
+                }
 
                 if (screen === 'home') {
                     document.getElementById('screen-products').classList.remove('hidden');
@@ -2524,9 +2539,17 @@
                 }
 
             },
-            switchTab(category, direction = 'none') {
+            switchTab(category, direction = 'none', pushState = true) {
                 const previousTab = this.data.activeTab;
                 this.data.activeTab = category;
+
+                if (pushState && previousTab !== category) {
+                    historyManager.pushState({
+                        view: 'home',
+                        subView: 'products',
+                        tab: category
+                    });
+                }
 
                 // Update Slider Position Class
                 const tabsContainer = document.getElementById('tabs-container');
@@ -2831,42 +2854,66 @@
 
         // --- 4. HISTORY & NAVIGATION MANAGER ---
         const historyManager = {
-            stateStack: [],
             init() {
-                // Initial replace state to ensure we have a base state
+                // Initial state: Home + Men's Tab + Products View
                 if (!history.state) {
-                    history.replaceState({ view: 'home', modal: null }, '', '');
+                    history.replaceState({
+                        view: 'home',
+                        subView: 'products', // 'products' or 'cart'
+                        tab: 'Men',          // 'Men' or 'Women'
+                        modal: null
+                    }, '', '');
                 }
 
                 window.addEventListener('popstate', (event) => {
-                    // Check if we have a modal open
+                    // 1. Handle Modal Closing
                     const openModal = document.querySelector('.modal-overlay[style*="display: flex"]');
                     if (openModal) {
-                        // Close the modal visually
                         openModal.style.display = 'none';
-                        // If the popstate didn't come from closing a modal (i.e. we are moving back in history),
-                        // we might need to sync our internal tracking if we had it.
-                        // But since we rely on the DOM state for "is modal open", this is sufficient for basic closing.
                         return;
                     }
 
-                    // Handle View Navigation
-                    if (event.state && event.state.view) {
-                        const view = event.state.view;
-                        globalNav.switchView(view, false); // false = don't push state again
-                    } else {
-                        // Fallback to home if no state (shouldn't happen often if we init correctly)
-                        globalNav.switchView('home', false);
+                    const state = event.state || {};
+                    const targetView = state.view || 'home';
+
+                    // 2. Switch Main View (Home, Orders, Account, Login)
+                    if (targetView !== globalNav.currentView) {
+                        globalNav.switchView(targetView, false);
+                    }
+
+                    // 3. Handle Home Sub-States (Tabs & Cart)
+                    if (targetView === 'home') {
+                        // Restore SubView (Products vs Cart)
+                        const targetSubView = state.subView || 'products';
+                        homeApp.navTo(targetSubView === 'cart' ? 'cart' : 'home', false);
+
+                        // Restore Tab (Men vs Women) if in Products view
+                        if (targetSubView === 'products') {
+                            const targetTab = state.tab || 'Men';
+                            if (homeApp.data.activeTab !== targetTab) {
+                                homeApp.switchTab(targetTab, 'none', false);
+                            }
+                        }
                     }
                 });
             },
-            pushState(view, modalId = null) {
-                const state = { view: view, modal: modalId };
-                history.pushState(state, '', '');
+            pushState(params) {
+                // params: { view?, subView?, tab?, modal? }
+                // Merge with current state to preserve missing fields
+                const currentState = history.state || {};
+                const newState = {
+                    view: params.view || currentState.view || 'home',
+                    subView: params.subView || currentState.subView || 'products',
+                    tab: params.tab || currentState.tab || 'Men',
+                    modal: params.modal || null
+                };
+
+                // Avoid pushing duplicate states
+                if (JSON.stringify(newState) !== JSON.stringify(currentState)) {
+                    history.pushState(newState, '', '');
+                }
             },
-            goBack() {
-                history.back();
-            }
+            goBack() { history.back(); }
         };
 
         // --- 5. UPDATED GLOBAL NAV ---
@@ -2882,23 +2929,16 @@
             // Initialize History Manager
             historyManager.init();
 
-            // Configure Google Provider
-            if (typeof provider !== 'undefined') {
-                provider.setCustomParameters({
-                    prompt: 'select_account'
-                });
-            }
-
             if (typeof auth !== 'undefined') {
                 // Handle Redirect Result
                 auth.getRedirectResult()
                     .then((result) => {
                         if (result.user) {
-                            console.log("Google Sign In Success (Redirect)");
-                            // The onAuthStateChanged listener will handle the rest
+                            console.log("✅ Google Sign In Success (Redirect)", result.user.email);
+                            accountApp.showToast("Signed in as " + result.user.displayName);
                         }
                     }).catch((error) => {
-                        console.error("Auth Redirect Error:", error);
+                        console.error("❌ Auth Redirect Error:", error);
                         accountApp.showToast("Login Failed: " + error.message);
                         // Reset button state if it was stuck loading
                         const btn = document.querySelector('.btn-google');
