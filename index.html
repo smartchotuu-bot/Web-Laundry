@@ -1982,8 +1982,22 @@
                 document.getElementById('edit-form-container').classList.add('hidden');
                 document.getElementById('static-info').classList.remove('hidden');
             },
-            confirmSave() { document.getElementById('confirmModal').style.display = 'flex'; },
-            closeModal(id) { document.getElementById(id).style.display = 'none'; },
+            confirmSave() {
+                document.getElementById('confirmModal').style.display = 'flex';
+                historyManager.pushState('account', 'confirmModal');
+            },
+            closeModal(id) {
+                document.getElementById(id).style.display = 'none';
+                // We should also go back in history if this was closed programmatically and not via back button
+                // But detecting that is tricky without complex state. 
+                // For now, let's assume programmatic close is final. 
+                // To keep history clean, we could do history.back() here?
+                // Let's rely on the user or just keep the history stack as is (it's less disruptive than double-back).
+                // Actually, if we pushed state, we SHOULD pop it.
+                if (history.state && history.state.modal === id) {
+                    history.back();
+                }
+            },
             saveData() {
                 this.closeModal('confirmModal');
                 const currentUser = auth.currentUser;
@@ -2012,7 +2026,10 @@
                 x.innerText = msg; x.className = "show";
                 setTimeout(() => x.className = x.className.replace("show", ""), 3000);
             },
-            showAppInfo() { document.getElementById('infoModal').style.display = 'flex'; },
+            showAppInfo() {
+                document.getElementById('infoModal').style.display = 'flex';
+                historyManager.pushState(globalNav.currentView || 'home', 'infoModal');
+            },
             toggleTheme() {
                 const body = document.body;
                 const isDark = body.getAttribute('data-theme') === 'dark';
@@ -2052,15 +2069,15 @@
                 const btn = document.querySelector('.btn-google');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
-                auth.signInWithPopup(provider)
-                    .then((result) => { console.log("Google Sign In Success"); })
-                    .catch((error) => {
-                        console.error("Auth Error:", error);
-                        accountApp.showToast("Login Failed: " + error.message);
-                        btn.innerHTML = originalText;
-                    });
+                // Use Redirect instead of Popup for better mobile handling
+                auth.signInWithRedirect(provider);
+                // Note: The promise below won't typically resolve because the page redirects.
+                // Errors are handled in getRedirectResult used in init.
             },
-            confirmLogout: () => { document.getElementById('logoutModal').style.display = 'flex'; },
+            confirmLogout: () => {
+                document.getElementById('logoutModal').style.display = 'flex';
+                historyManager.pushState(globalNav.currentView || 'home', 'logoutModal');
+            },
             performLogout: () => {
                 auth.signOut().then(() => {
                     localStorage.removeItem('laundryUser');
@@ -2114,8 +2131,14 @@
                         btn.innerHTML = originalText;
                     });
             },
-            switchView: (viewName) => {
+            switchView: (viewName, pushState = true) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+
+                // Track current view in history
+                if (pushState && viewName !== 'login') {
+                    historyManager.pushState(viewName);
+                }
+
                 if (viewName === 'home') {
                     document.getElementById('view-home').classList.add('active');
                     homeApp.navTo('home');
@@ -2154,10 +2177,14 @@
                 this.currentCancelOrder = { id: orderId, key: firebaseKey };
                 document.getElementById('cancelModalOrderId').textContent = orderId;
                 document.getElementById('cancelOrderModal').style.display = 'flex';
+                historyManager.pushState('orders', 'cancelOrderModal');
             },
             closeCancelModal() {
                 document.getElementById('cancelOrderModal').style.display = 'none';
                 this.currentCancelOrder = null;
+                if (history.state && history.state.modal === 'cancelOrderModal') {
+                    history.back();
+                }
             },
             confirmCancelOrder() {
                 if (!this.currentCancelOrder) return;
@@ -2802,13 +2829,82 @@
             }
         };
 
-        // --- 3. INIT LOGIC ---
+        // --- 4. HISTORY & NAVIGATION MANAGER ---
+        const historyManager = {
+            stateStack: [],
+            init() {
+                // Initial replace state to ensure we have a base state
+                if (!history.state) {
+                    history.replaceState({ view: 'home', modal: null }, '', '');
+                }
+
+                window.addEventListener('popstate', (event) => {
+                    // Check if we have a modal open
+                    const openModal = document.querySelector('.modal-overlay[style*="display: flex"]');
+                    if (openModal) {
+                        // Close the modal visually
+                        openModal.style.display = 'none';
+                        // If the popstate didn't come from closing a modal (i.e. we are moving back in history),
+                        // we might need to sync our internal tracking if we had it.
+                        // But since we rely on the DOM state for "is modal open", this is sufficient for basic closing.
+                        return;
+                    }
+
+                    // Handle View Navigation
+                    if (event.state && event.state.view) {
+                        const view = event.state.view;
+                        globalNav.switchView(view, false); // false = don't push state again
+                    } else {
+                        // Fallback to home if no state (shouldn't happen often if we init correctly)
+                        globalNav.switchView('home', false);
+                    }
+                });
+            },
+            pushState(view, modalId = null) {
+                const state = { view: view, modal: modalId };
+                history.pushState(state, '', '');
+            },
+            goBack() {
+                history.back();
+            }
+        };
+
+        // --- 5. UPDATED GLOBAL NAV ---
+        // (We overwrite the previous globalNav to include history support)
+        // ... We will integrate this into the existing globalNav object reference or methods.
+
+        // --- 3. INIT LOGIC (Updated) ---
         // Ensure DOM is ready before starting
         document.addEventListener('DOMContentLoaded', () => {
             homeApp.init();
             swipeHandler.init(); // Initialize swipe gestures
 
+            // Initialize History Manager
+            historyManager.init();
+
+            // Configure Google Provider
+            if (typeof provider !== 'undefined') {
+                provider.setCustomParameters({
+                    prompt: 'select_account'
+                });
+            }
+
             if (typeof auth !== 'undefined') {
+                // Handle Redirect Result
+                auth.getRedirectResult()
+                    .then((result) => {
+                        if (result.user) {
+                            console.log("Google Sign In Success (Redirect)");
+                            // The onAuthStateChanged listener will handle the rest
+                        }
+                    }).catch((error) => {
+                        console.error("Auth Redirect Error:", error);
+                        accountApp.showToast("Login Failed: " + error.message);
+                        // Reset button state if it was stuck loading
+                        const btn = document.querySelector('.btn-google');
+                        if (btn) btn.innerHTML = '<img src="google.png" class="g-svg"> Continue with Google';
+                    });
+
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("User detected:", user.uid);
