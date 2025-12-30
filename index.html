@@ -2714,6 +2714,9 @@
                 return '₹' + grandTotal;
             },
             placeOrder() {
+                // Vibrate phone on click
+                if (navigator.vibrate) navigator.vibrate(50); // Short haptic feedback
+
                 const btn = document.getElementById('main-pay-btn');
                 const total = this.updateBill();
                 const allItems = this.data.bags.flatMap(b => b.items);
@@ -2762,7 +2765,7 @@
             touchStartY: 0,
             touchEndX: 0,
             touchEndY: 0,
-            minSwipeDistance: 40, // Reduced from 50 for easier swiping
+            minSwipeDistance: 15, // Reduced to 15px for sensitive swipe (thora sa swipe)
 
             init() {
                 const productList = document.getElementById('product-list');
