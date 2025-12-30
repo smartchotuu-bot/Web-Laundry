@@ -1560,12 +1560,8 @@
                 </svg>
                 Continue with Google
             </button>
-
-
         </div>
     </div>
-
-
 
     <div id="view-login" class="view-section">
         <div class="login-wrapper">
@@ -1954,22 +1950,11 @@
                 var auth = firebase.auth();
                 var db = firebase.database();
                 var provider = new firebase.auth.GoogleAuthProvider();
-
-                // alert("DEBUG: Firebase Initialized"); // Confirm SDK load
-
-                // --- AUTH CONFIGURATION ---
-                // Force account selection prompt
-                provider.setCustomParameters({ prompt: 'select_account' });
-                // Use device language for the login flow
-                auth.useDeviceLanguage();
             } else {
                 console.error("Firebase SDK not loaded");
                 alert("Error loading app resources. Please check internet connection.");
             }
-        } catch (e) {
-            console.error(e);
-            alert("Firebase Init Error: " + e.message);
-        }
+        } catch (e) { console.error(e); }
 
         // --- 2. APP MODULES ---
 
@@ -1997,22 +1982,8 @@
                 document.getElementById('edit-form-container').classList.add('hidden');
                 document.getElementById('static-info').classList.remove('hidden');
             },
-            confirmSave() {
-                document.getElementById('confirmModal').style.display = 'flex';
-                historyManager.pushState('account', 'confirmModal');
-            },
-            closeModal(id) {
-                document.getElementById(id).style.display = 'none';
-                // We should also go back in history if this was closed programmatically and not via back button
-                // But detecting that is tricky without complex state. 
-                // For now, let's assume programmatic close is final. 
-                // To keep history clean, we could do history.back() here?
-                // Let's rely on the user or just keep the history stack as is (it's less disruptive than double-back).
-                // Actually, if we pushed state, we SHOULD pop it.
-                if (history.state && history.state.modal === id) {
-                    history.back();
-                }
-            },
+            confirmSave() { document.getElementById('confirmModal').style.display = 'flex'; },
+            closeModal(id) { document.getElementById(id).style.display = 'none'; },
             saveData() {
                 this.closeModal('confirmModal');
                 const currentUser = auth.currentUser;
@@ -2041,10 +2012,7 @@
                 x.innerText = msg; x.className = "show";
                 setTimeout(() => x.className = x.className.replace("show", ""), 3000);
             },
-            showAppInfo() {
-                document.getElementById('infoModal').style.display = 'flex';
-                historyManager.pushState(globalNav.currentView || 'home', 'infoModal');
-            },
+            showAppInfo() { document.getElementById('infoModal').style.display = 'flex'; },
             toggleTheme() {
                 const body = document.body;
                 const isDark = body.getAttribute('data-theme') === 'dark';
@@ -2057,7 +2025,6 @@
         };
 
         const landingApp = {
-
             checkExistingUser: () => {
                 const userData = localStorage.getItem('laundryUser');
                 return userData ? JSON.parse(userData) : null;
@@ -2067,42 +2034,33 @@
                 const userRef = db.ref('users/' + uid);
                 userRef.once('value').then((snapshot) => {
                     if (snapshot.exists()) {
-                        alert("DEBUG: User Found in DB. Going to Home.");
                         const userData = snapshot.val();
                         localStorage.setItem('laundryUser', JSON.stringify(userData));
                         globalNav.loadUserData(userData);
                         globalNav.switchView('home');
                         if (typeof ordersApp !== 'undefined') ordersApp.init();
                     } else {
-                        alert("DEBUG: New User (No DB Record). Going to Profile Setup.");
-                        globalNav.switchView('login');
+                        document.getElementById('view-landing').classList.remove('active');
+                        document.getElementById('view-login').classList.add('active');
                     }
                 }).catch((error) => {
-                    alert("DEBUG: Database Error: " + error.message);
                     console.error("Database error:", error);
                     accountApp.showToast("Error connecting to database.");
                 });
             },
             handleGoogleAuth: () => {
                 const btn = document.querySelector('.btn-google');
+                const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
-
-                // Switching to Popup to avoid redirect-based session loss on some browsers/localhost
                 auth.signInWithPopup(provider)
-                    .then((result) => {
-                        console.log("✅ Google Sign In Success (Popup)", result.user.email);
-                        // The onAuthStateChanged listener will handle the redirect
-                    }).catch((error) => {
-                        console.error("Popup Error:", error);
-                        alert("Login Failed: " + error.message);
-                        btn.innerHTML = '<img src="google.png" class="g-svg"> Continue with Google';
+                    .then((result) => { console.log("Google Sign In Success"); })
+                    .catch((error) => {
+                        console.error("Auth Error:", error);
+                        accountApp.showToast("Login Failed: " + error.message);
+                        btn.innerHTML = originalText;
                     });
             },
-
-            confirmLogout: () => {
-                document.getElementById('logoutModal').style.display = 'flex';
-                historyManager.pushState(globalNav.currentView || 'home', 'logoutModal');
-            },
+            confirmLogout: () => { document.getElementById('logoutModal').style.display = 'flex'; },
             performLogout: () => {
                 auth.signOut().then(() => {
                     localStorage.removeItem('laundryUser');
@@ -2156,14 +2114,8 @@
                         btn.innerHTML = originalText;
                     });
             },
-            switchView: (viewName, pushState = true) => {
+            switchView: (viewName) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-
-                // Track current view in history
-                if (pushState && viewName !== 'login') {
-                    historyManager.pushState(viewName);
-                }
-
                 if (viewName === 'home') {
                     document.getElementById('view-home').classList.add('active');
                     homeApp.navTo('home');
@@ -2202,14 +2154,10 @@
                 this.currentCancelOrder = { id: orderId, key: firebaseKey };
                 document.getElementById('cancelModalOrderId').textContent = orderId;
                 document.getElementById('cancelOrderModal').style.display = 'flex';
-                historyManager.pushState('orders', 'cancelOrderModal');
             },
             closeCancelModal() {
                 document.getElementById('cancelOrderModal').style.display = 'none';
                 this.currentCancelOrder = null;
-                if (history.state && history.state.modal === 'cancelOrderModal') {
-                    history.back();
-                }
             },
             confirmCancelOrder() {
                 if (!this.currentCancelOrder) return;
@@ -2522,18 +2470,9 @@
                     console.error("Error loading products:", error);
                 });
             },
-            navTo(screen, pushState = true) {
+            navTo(screen) {
                 // Select the bottom navigation bar within the home view
                 const bottomNav = document.querySelector('#view-home .bottom-nav');
-
-                // Track sub-view change
-                if (pushState) {
-                    historyManager.pushState({
-                        view: 'home',
-                        subView: screen === 'home' ? 'products' : 'cart',
-                        tab: this.data.activeTab
-                    });
-                }
 
                 if (screen === 'home') {
                     document.getElementById('screen-products').classList.remove('hidden');
@@ -2558,17 +2497,9 @@
                 }
 
             },
-            switchTab(category, direction = 'none', pushState = true) {
+            switchTab(category, direction = 'none') {
                 const previousTab = this.data.activeTab;
                 this.data.activeTab = category;
-
-                if (pushState && previousTab !== category) {
-                    historyManager.pushState({
-                        view: 'home',
-                        subView: 'products',
-                        tab: category
-                    });
-                }
 
                 // Update Slider Position Class
                 const tabsContainer = document.getElementById('tabs-container');
@@ -2871,122 +2802,19 @@
             }
         };
 
-        // --- 4. HISTORY & NAVIGATION MANAGER ---
-        const historyManager = {
-            init() {
-                // Initial state: Home + Men's Tab + Products View
-                if (!history.state) {
-                    history.replaceState({
-                        view: 'home',
-                        subView: 'products', // 'products' or 'cart'
-                        tab: 'Men',          // 'Men' or 'Women'
-                        modal: null
-                    }, '', '');
-                }
-
-                window.addEventListener('popstate', (event) => {
-                    // 1. Handle Modal Closing
-                    const openModal = document.querySelector('.modal-overlay[style*="display: flex"]');
-                    if (openModal) {
-                        openModal.style.display = 'none';
-                        return;
-                    }
-
-                    const state = event.state || {};
-                    const targetView = state.view || 'home';
-
-                    // 2. Switch Main View (Home, Orders, Account, Login)
-                    if (targetView !== globalNav.currentView) {
-                        globalNav.switchView(targetView, false);
-                    }
-
-                    // 3. Handle Home Sub-States (Tabs & Cart)
-                    if (targetView === 'home') {
-                        // Restore SubView (Products vs Cart)
-                        const targetSubView = state.subView || 'products';
-                        homeApp.navTo(targetSubView === 'cart' ? 'cart' : 'home', false);
-
-                        // Restore Tab (Men vs Women) if in Products view
-                        if (targetSubView === 'products') {
-                            const targetTab = state.tab || 'Men';
-                            if (homeApp.data.activeTab !== targetTab) {
-                                homeApp.switchTab(targetTab, 'none', false);
-                            }
-                        }
-                    }
-                });
-            },
-            pushState(params) {
-                // Handle string input (view name) or object
-                let viewName;
-                let newParams = {};
-
-                if (typeof params === 'string') {
-                    viewName = params;
-                    newParams = { view: viewName };
-                } else {
-                    newParams = params || {};
-                    viewName = newParams.view;
-                }
-
-                // Merge with current state to preserve missing fields
-                const currentState = history.state || {};
-                const newState = {
-                    view: newParams.view || currentState.view || 'home',
-                    subView: newParams.subView || currentState.subView || 'products',
-                    tab: newParams.tab || currentState.tab || 'Men',
-                    modal: newParams.modal || null
-                };
-
-                // Avoid pushing duplicate states
-                if (JSON.stringify(newState) !== JSON.stringify(currentState)) {
-                    history.pushState(newState, '', '');
-                }
-            },
-            goBack() { history.back(); }
-        };
-
-        // --- 5. UPDATED GLOBAL NAV ---
-        // (We overwrite the previous globalNav to include history support)
-        // ... We will integrate this into the existing globalNav object reference or methods.
-
-        // --- 3. INIT LOGIC (Updated) ---
+        // --- 3. INIT LOGIC ---
         // Ensure DOM is ready before starting
         document.addEventListener('DOMContentLoaded', () => {
             homeApp.init();
             swipeHandler.init(); // Initialize swipe gestures
 
-            // Initialize History Manager
-            historyManager.init();
-
             if (typeof auth !== 'undefined') {
-                // Handle Redirect Result
-                auth.getRedirectResult()
-                    .then((result) => {
-                        if (result.user) {
-                            console.log("✅ Google Sign In Success (Redirect)", result.user.email);
-                            alert("DEBUG: Redirect Success! User: " + result.user.email);
-                            accountApp.showToast("Signed in as " + result.user.displayName);
-                        } else {
-                            // alert("DEBUG: No Redirect Result (Normal Load)");
-                        }
-                    }).catch((error) => {
-                        console.error("❌ Auth Redirect Error:", error);
-                        alert("DEBUG: Redirect Error: " + error.message);
-                        accountApp.showToast("Login Failed: " + error.message);
-                        // Reset button state if it was stuck loading
-                        const btn = document.querySelector('.btn-google');
-                        if (btn) btn.innerHTML = '<img src="google.png" class="g-svg"> Continue with Google';
-                    });
-
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("User detected:", user.uid);
-                        alert("DEBUG: User Detected: " + user.email + "\nChecking Database...");
                         landingApp.checkDbAndRedirect(user);
                     } else {
                         console.log("No user signed in.");
-                        alert("DEBUG: No User Signed In (Auth State is null)");
                     }
                 });
             }
