@@ -1,0 +1,15 @@
+# Secrets
+serviceAccountKey.json
+.env
+
+# Dependencies
+node_modules/
+
+# System
+Thumbs.db
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
