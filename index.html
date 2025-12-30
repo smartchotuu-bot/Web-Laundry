@@ -140,6 +140,10 @@
             padding-bottom: 0;
         }
 
+        #view-account.view-section {
+            padding-bottom: 0;
+        }
+
         .view-section.active {
             display: block;
         }
@@ -1091,7 +1095,6 @@
         /* Account */
         .account-bg-layer {
             padding: 20px;
-            padding-bottom: 90px;
         }
 
         .ac-header {
@@ -1122,6 +1125,7 @@
             background: linear-gradient(to right, var(--text-main), #4a5568);
             position: relative;
             width: 100%;
+            border-radius: 24px 24px 0 0;
         }
 
         .pc-edit-fab {
@@ -1654,7 +1658,7 @@
             </div>
 
             <div class="app-container" id="product-list"></div>
-            <div style="height: 60px;"></div>
+            <div style="height: 10px;"></div>
 
             <div class="floating-bar" id="add-to-bag-bar">
                 <div>
@@ -2715,7 +2719,7 @@
             },
             placeOrder() {
                 // Vibrate phone on click
-                if (navigator.vibrate) navigator.vibrate(1500); // 1.5s haptic feedback
+                if (navigator.vibrate) navigator.vibrate(1000); // 1s haptic feedback
 
                 const btn = document.getElementById('main-pay-btn');
                 const total = this.updateBill();
