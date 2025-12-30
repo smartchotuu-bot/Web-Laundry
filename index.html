@@ -1561,67 +1561,11 @@
                 Continue with Google
             </button>
 
-            <button class="btn-google" onclick="landingApp.switchPhoneAuth()"
-                style="margin-top: 15px; color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-color);">
-                <i class="fas fa-phone-alt"
-                    style="margin-right: 12px; font-size: 18px; color: var(--primary-action);"></i>
-                Continue with Phone
-            </button>
+
         </div>
     </div>
 
-    <div id="view-phone-auth" class="view-section">
-        <div class="login-wrapper">
-            <div class="login-card">
-                <div class="header">
-                    <button class="back-btn" onclick="globalNav.switchView('landing')"
-                        style="border:none; background:none; font-size:18px; color:var(--text-main);"><i
-                            class="fas fa-arrow-left"></i></button>
-                    <h2 style="color:var(--text-main); font-size: 16px;">Login with Phone</h2>
-                    <div style="width: 24px;"></div>
-                </div>
 
-                <div style="padding: 20px;">
-                    <p style="color:var(--text-sub); font-size:14px; margin-bottom:25px; text-align:center;">
-                        Enter your mobile number to receive a verification code.
-                    </p>
-
-                    <div id="phone-input-section">
-                        <div class="login-input-group">
-                            <label class="login-label">Mobile Number</label>
-                            <div class="phone-wrapper"
-                                style="border:1px solid rgba(0,0,0,0.1); border-radius:12px; overflow:hidden;">
-                                <span class="country-code"
-                                    style="border:none; background:rgba(0,0,0,0.03); color:var(--text-main);">+91</span>
-                                <input class="login-input" type="tel" id="auth-phone-input"
-                                    placeholder="Enter 10-digit number" maxlength="10"
-                                    style="border:none; background:transparent;">
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" onclick="landingApp.sendOTP()" id="btn-get-otp"
-                            style="margin-top:20px;">Get OTP</button>
-                    </div>
-
-                    <div id="otp-input-section" class="hidden">
-                        <div class="login-input-group">
-                            <label class="login-label">Enter OTP</label>
-                            <input class="login-input" type="number" id="auth-otp-input" placeholder="------"
-                                style="letter-spacing: 5px; text-align: center; font-size: 20px;">
-                        </div>
-                        <div style="text-align:center; margin-bottom:20px;">
-                            <span style="font-size:12px; color:var(--text-sub);">Didn't receive code? <a href="#"
-                                    onclick="landingApp.sendOTP()"
-                                    style="color:var(--primary-action);">Resend</a></span>
-                        </div>
-                        <button class="btn btn-primary" onclick="landingApp.verifyOTP()" id="btn-verify-otp">Verify &
-                            Login</button>
-                    </div>
-
-                    <div id="recaptcha-container"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div id="view-login" class="view-section">
         <div class="login-wrapper">
@@ -2108,7 +2052,7 @@
         };
 
         const landingApp = {
-            confirmationResult: null,
+
             checkExistingUser: () => {
                 const userData = localStorage.getItem('laundryUser');
                 return userData ? JSON.parse(userData) : null;
@@ -2125,11 +2069,6 @@
                         if (typeof ordersApp !== 'undefined') ordersApp.init();
                     } else {
                         globalNav.switchView('login');
-                        // Pre-fill phone if available (remove +91)
-                        if (user.phoneNumber) {
-                            const phone = user.phoneNumber.replace('+91', '');
-                            document.getElementById('whatsapp').value = phone;
-                        }
                     }
                 }).catch((error) => {
                     console.error("Database error:", error);
@@ -2141,84 +2080,7 @@
                 btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
                 auth.signInWithRedirect(provider);
             },
-            switchPhoneAuth: () => {
-                globalNav.switchView('phone-auth');
-                setTimeout(() => landingApp.initRecaptcha(), 500);
-            },
-            initRecaptcha: () => {
-                if (!window.recaptchaVerifier) {
-                    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                        'size': 'invisible',
-                        'callback': (response) => {
-                            // reCAPTCHA solved
-                            console.log("Recaptcha Verified");
-                        }
-                    });
-                    window.recaptchaVerifier.render();
-                }
-            },
-            sendOTP: () => {
-                const phoneInput = document.getElementById('auth-phone-input').value;
-                if (!phoneInput || phoneInput.length !== 10) {
-                    accountApp.showToast("Please enter a valid 10-digit number");
-                    return;
-                }
-                const phoneNumber = "+91" + phoneInput;
-                const appVerifier = window.recaptchaVerifier;
 
-                const btn = document.getElementById('btn-get-otp');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
-                btn.disabled = true;
-
-                auth.signInWithPhoneNumber(phoneNumber, appVerifier)
-                    .then((confirmationResult) => {
-                        landingApp.confirmationResult = confirmationResult;
-                        document.getElementById('phone-input-section').classList.add('hidden');
-                        document.getElementById('otp-input-section').classList.remove('hidden');
-                        document.getElementById('auth-otp-input').focus();
-                        accountApp.showToast("OTP Sent!");
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }).catch((error) => {
-                        console.error("SMS Error:", error);
-                        // Show exact error to help debugging
-                        accountApp.showToast(error.message || "Error sending OTP");
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                        if (window.recaptchaVerifier) window.recaptchaVerifier.reset();
-                    });
-            },
-            verifyOTP: () => {
-                const code = document.getElementById('auth-otp-input').value;
-                if (!code || code.length < 6) {
-                    accountApp.showToast("Please enter the 6-digit OTP");
-                    return;
-                }
-
-                const btn = document.getElementById('btn-verify-otp');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying...';
-
-                landingApp.confirmationResult.confirm(code).then((result) => {
-                    const user = result.user;
-                    accountApp.showToast("Verified Successfully! ✅");
-                    landingApp.checkDbAndRedirect(user);
-
-                    // Reset UI for next time
-                    setTimeout(() => {
-                        document.getElementById('otp-input-section').classList.add('hidden');
-                        document.getElementById('phone-input-section').classList.remove('hidden');
-                        document.getElementById('auth-otp-input').value = '';
-                        document.getElementById('auth-phone-input').value = '';
-                        btn.innerHTML = originalText;
-                    }, 1000);
-                }).catch((error) => {
-                    console.error("OTP Error:", error);
-                    accountApp.showToast("Invalid OTP. Please try again.");
-                    btn.innerHTML = originalText;
-                });
-            },
             confirmLogout: () => {
                 document.getElementById('logoutModal').style.display = 'flex';
                 historyManager.pushState(globalNav.currentView || 'home', 'logoutModal');
@@ -2280,7 +2142,7 @@
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
 
                 // Track current view in history
-                if (pushState && viewName !== 'login' && viewName !== 'phone-auth') {
+                if (pushState && viewName !== 'login') {
                     historyManager.pushState(viewName);
                 }
 
@@ -2294,10 +2156,6 @@
                     document.getElementById('view-account').classList.add('active');
                 } else if (viewName === 'login') {
                     document.getElementById('view-login').classList.add('active');
-                } else if (viewName === 'phone-auth') {
-                    document.getElementById('view-phone-auth').classList.add('active');
-                } else if (viewName === 'landing') {
-                    document.getElementById('view-landing').classList.add('active');
                 }
             }
         };
