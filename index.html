@@ -2715,7 +2715,7 @@
             },
             placeOrder() {
                 // Vibrate phone on click
-                if (navigator.vibrate) navigator.vibrate(50); // Short haptic feedback
+                if (navigator.vibrate) navigator.vibrate(1500); // 1.5s haptic feedback
 
                 const btn = document.getElementById('main-pay-btn');
                 const total = this.updateBill();
