@@ -1769,7 +1769,11 @@
                         </div>
                         <div class="login-input-group">
                             <label class="login-label">Address</label>
-                            <input class="login-input" type="text" id="inpLoc">
+                            <div class="area-input-wrapper">
+                                <input class="login-input" type="text" id="inpLoc" autocomplete="off">
+                                <div class="area-suggestions" id="accountAreaSuggestions"></div>
+                            </div>
+                            <div class="error-message" id="accountAreaError">Service not available in this area</div>
                         </div>
                         <div class="login-input-group">
                             <label class="login-label">Landmark</label>
@@ -1967,9 +1971,15 @@
                 this.originalValues = {
                     name: document.getElementById('inpName').value,
                     phone: document.getElementById('inpPhone').value,
+                    phone: document.getElementById('inpPhone').value,
                     loc: document.getElementById('inpLoc').value,
                     land: document.getElementById('inpLand').value
                 };
+
+                // Attach validation to the account address field
+                if (typeof areaValidation !== 'undefined') {
+                    areaValidation.attach('inpLoc', 'accountAreaSuggestions', 'accountAreaError');
+                }
             },
             cancelEdit() {
                 document.getElementById('inpName').value = this.originalValues.name;
@@ -1993,6 +2003,13 @@
                     userData.phone = document.getElementById('inpPhone').value;
                     userData.address = document.getElementById('inpLoc').value;
                     userData.landmark = document.getElementById('inpLand').value;
+
+                    // Validate area first
+                    const areaInput = document.getElementById('inpLoc').value.trim();
+                    if (!areaValidation.validateArea(areaInput, 'inpLoc', 'accountAreaError')) {
+                        accountApp.showToast("Service not available in this area");
+                        return;
+                    }
 
                     db.ref('users/' + currentUser.uid).update(userData)
                         .then(() => {
@@ -2259,57 +2276,54 @@
 
         const areaValidation = {
             availableAreas: [],
-            isValidArea: false,
 
             init() {
-                // Fetch areas from Firebase
                 this.fetchAreas();
+            },
 
-                // Set up event listeners
-                const areaInput = document.getElementById('areaSearch');
-                const suggestionsBox = document.getElementById('areaSuggestions');
+            attach(inputId, suggestionsId, errorId) {
+                const areaInput = document.getElementById(inputId);
 
                 if (areaInput) {
-                    // Input event for real-time suggestions
-                    areaInput.addEventListener('input', (e) => {
+                    // clone node to remove previous listeners if any (simple way to reset)
+                    // But here we might just want to ensure we don't double bind. 
+                    // For simplicity, we'll assume attach is safe or just override oninput.
+
+                    areaInput.oninput = (e) => {
                         const value = e.target.value.trim();
                         if (value.length > 0) {
-                            this.showSuggestions(value);
+                            this.showSuggestions(value, suggestionsId, inputId, errorId);
                         } else {
-                            this.hideSuggestions();
-                            this.clearValidation();
+                            this.hideSuggestions(suggestionsId);
+                            this.clearValidation(inputId, errorId);
                         }
-                    });
+                    };
 
-                    // Blur event to validate after user leaves the field
-                    areaInput.addEventListener('blur', () => {
+                    areaInput.onblur = () => {
                         setTimeout(() => {
                             const value = areaInput.value.trim();
                             if (value.length > 0) {
-                                this.validateArea(value);
+                                this.validateArea(value, inputId, errorId);
                             }
-                            this.hideSuggestions();
-                        }, 200); // Delay to allow click on suggestion
-                    });
+                            this.hideSuggestions(suggestionsId);
+                        }, 200);
+                    };
 
-                    // Focus event to show suggestions if there's text
-                    areaInput.addEventListener('focus', (e) => {
+                    areaInput.onfocus = (e) => {
                         const value = e.target.value.trim();
                         if (value.length > 0) {
-                            this.showSuggestions(value);
+                            this.showSuggestions(value, suggestionsId, inputId, errorId);
                         }
-                    });
+                    };
                 }
             },
 
             fetchAreas() {
-                // Fetch from Firebase Database
                 if (typeof db !== 'undefined') {
                     db.ref('serviceAreas').once('value')
                         .then((snapshot) => {
                             if (snapshot.exists()) {
                                 const data = snapshot.val();
-                                // Handle both array and object formats
                                 if (Array.isArray(data)) {
                                     this.availableAreas = data;
                                 } else if (typeof data === 'object') {
@@ -2325,13 +2339,11 @@
                             console.error('Error fetching areas from DB:', error);
                             this.availableAreas = [];
                         });
-                } else {
-                    console.warn('Firebase DB not initialized, cannot load areas.');
                 }
             },
 
-            showSuggestions(input) {
-                const suggestionsBox = document.getElementById('areaSuggestions');
+            showSuggestions(input, suggestionsId, inputId, errorId) {
+                const suggestionsBox = document.getElementById(suggestionsId);
                 const filtered = this.filterAreas(input);
 
                 suggestionsBox.innerHTML = '';
@@ -2341,7 +2353,7 @@
                         const item = document.createElement('div');
                         item.className = 'area-suggestion-item';
                         item.textContent = area;
-                        item.onclick = () => this.selectArea(area);
+                        item.onclick = () => this.selectArea(area, inputId, suggestionsId, errorId);
                         suggestionsBox.appendChild(item);
                     });
                     suggestionsBox.classList.add('show');
@@ -2354,55 +2366,51 @@
                 }
             },
 
-            hideSuggestions() {
-                const suggestionsBox = document.getElementById('areaSuggestions');
-                suggestionsBox.classList.remove('show');
+            hideSuggestions(suggestionsId) {
+                const suggestionsBox = document.getElementById(suggestionsId);
+                if (suggestionsBox) suggestionsBox.classList.remove('show');
             },
 
             filterAreas(input) {
                 const searchTerm = input.toLowerCase();
                 return this.availableAreas.filter(area =>
                     area.toLowerCase().includes(searchTerm)
-                ).slice(0, 5); // Limit to 5 suggestions
+                ).slice(0, 5);
             },
 
-            selectArea(area) {
-                const areaInput = document.getElementById('areaSearch');
+            selectArea(area, inputId, suggestionsId, errorId) {
+                const areaInput = document.getElementById(inputId);
                 areaInput.value = area;
-                this.hideSuggestions();
-                this.validateArea(area);
+                this.hideSuggestions(suggestionsId);
+                this.validateArea(area, inputId, errorId);
             },
 
-            validateArea(input) {
-                const areaInput = document.getElementById('areaSearch');
-                const errorMsg = document.getElementById('areaError');
+            validateArea(input, inputId, errorId) {
+                const areaInput = document.getElementById(inputId);
+                const errorMsg = document.getElementById(errorId);
 
-                // Case-insensitive comparison
                 const isValid = this.availableAreas.some(area =>
                     area.toLowerCase() === input.toLowerCase()
                 );
 
-                this.isValidArea = isValid;
-
                 if (isValid) {
                     areaInput.classList.remove('error');
                     areaInput.classList.add('valid');
-                    errorMsg.classList.remove('show');
+                    if (errorMsg) errorMsg.classList.remove('show');
                 } else {
                     areaInput.classList.remove('valid');
                     areaInput.classList.add('error');
-                    errorMsg.classList.add('show');
+                    if (errorMsg) errorMsg.classList.add('show');
                 }
 
                 return isValid;
             },
 
-            clearValidation() {
-                const areaInput = document.getElementById('areaSearch');
-                const errorMsg = document.getElementById('areaError');
+            clearValidation(inputId, errorId) {
+                const areaInput = document.getElementById(inputId);
+                const errorMsg = document.getElementById(errorId);
                 areaInput.classList.remove('error', 'valid');
-                errorMsg.classList.remove('show');
-                this.isValidArea = false;
+                if (errorMsg) errorMsg.classList.remove('show');
             }
         };
 
@@ -2417,7 +2425,7 @@
                 document.getElementById('progressFill').style.width = "100%";
                 // Initialize area validation when entering step 2
                 if (typeof areaValidation !== 'undefined') {
-                    areaValidation.init();
+                    areaValidation.attach('areaSearch', 'areaSuggestions', 'areaError');
                 }
             },
             prevStep: () => {
@@ -2437,7 +2445,7 @@
                 }
 
                 // Check if area is valid
-                if (!areaValidation.validateArea(areaInput)) {
+                if (!areaValidation.validateArea(areaInput, 'areaSearch', 'areaError')) {
                     accountApp.showToast("Service not available in this area");
                     return;
                 }
