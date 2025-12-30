@@ -2899,14 +2899,25 @@
                 });
             },
             pushState(params) {
-                // params: { view?, subView?, tab?, modal? }
+                // Handle string input (view name) or object
+                let viewName;
+                let newParams = {};
+
+                if (typeof params === 'string') {
+                    viewName = params;
+                    newParams = { view: viewName };
+                } else {
+                    newParams = params || {};
+                    viewName = newParams.view;
+                }
+
                 // Merge with current state to preserve missing fields
                 const currentState = history.state || {};
                 const newState = {
-                    view: params.view || currentState.view || 'home',
-                    subView: params.subView || currentState.subView || 'products',
-                    tab: params.tab || currentState.tab || 'Men',
-                    modal: params.modal || null
+                    view: newParams.view || currentState.view || 'home',
+                    subView: newParams.subView || currentState.subView || 'products',
+                    tab: newParams.tab || currentState.tab || 'Men',
+                    modal: newParams.modal || null
                 };
 
                 // Avoid pushing duplicate states
@@ -2949,9 +2960,11 @@
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("User detected:", user.uid);
+                        // alert("DEBUG: User Detected: " + user.email);
                         landingApp.checkDbAndRedirect(user);
                     } else {
                         console.log("No user signed in.");
+                        // alert("DEBUG: No User Signed In");
                     }
                 });
             }
