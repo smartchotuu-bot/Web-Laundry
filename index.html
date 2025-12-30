@@ -2086,7 +2086,17 @@
             handleGoogleAuth: () => {
                 const btn = document.querySelector('.btn-google');
                 btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
-                auth.signInWithRedirect(provider);
+
+                // Switching to Popup to avoid redirect-based session loss on some browsers/localhost
+                auth.signInWithPopup(provider)
+                    .then((result) => {
+                        console.log("✅ Google Sign In Success (Popup)", result.user.email);
+                        // The onAuthStateChanged listener will handle the redirect
+                    }).catch((error) => {
+                        console.error("Popup Error:", error);
+                        alert("Login Failed: " + error.message);
+                        btn.innerHTML = '<img src="google.png" class="g-svg"> Continue with Google';
+                    });
             },
 
             confirmLogout: () => {
