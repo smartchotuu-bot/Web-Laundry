@@ -1955,6 +1955,8 @@
                 var db = firebase.database();
                 var provider = new firebase.auth.GoogleAuthProvider();
 
+                // alert("DEBUG: Firebase Initialized"); // Confirm SDK load
+
                 // --- AUTH CONFIGURATION ---
                 // Force account selection prompt
                 provider.setCustomParameters({ prompt: 'select_account' });
@@ -1964,7 +1966,10 @@
                 console.error("Firebase SDK not loaded");
                 alert("Error loading app resources. Please check internet connection.");
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+            alert("Firebase Init Error: " + e.message);
+        }
 
         // --- 2. APP MODULES ---
 
@@ -2062,15 +2067,18 @@
                 const userRef = db.ref('users/' + uid);
                 userRef.once('value').then((snapshot) => {
                     if (snapshot.exists()) {
+                        alert("DEBUG: User Found in DB. Going to Home.");
                         const userData = snapshot.val();
                         localStorage.setItem('laundryUser', JSON.stringify(userData));
                         globalNav.loadUserData(userData);
                         globalNav.switchView('home');
                         if (typeof ordersApp !== 'undefined') ordersApp.init();
                     } else {
+                        alert("DEBUG: New User (No DB Record). Going to Profile Setup.");
                         globalNav.switchView('login');
                     }
                 }).catch((error) => {
+                    alert("DEBUG: Database Error: " + error.message);
                     console.error("Database error:", error);
                     accountApp.showToast("Error connecting to database.");
                 });
@@ -2947,10 +2955,14 @@
                     .then((result) => {
                         if (result.user) {
                             console.log("✅ Google Sign In Success (Redirect)", result.user.email);
+                            alert("DEBUG: Redirect Success! User: " + result.user.email);
                             accountApp.showToast("Signed in as " + result.user.displayName);
+                        } else {
+                            // alert("DEBUG: No Redirect Result (Normal Load)");
                         }
                     }).catch((error) => {
                         console.error("❌ Auth Redirect Error:", error);
+                        alert("DEBUG: Redirect Error: " + error.message);
                         accountApp.showToast("Login Failed: " + error.message);
                         // Reset button state if it was stuck loading
                         const btn = document.querySelector('.btn-google');
@@ -2960,11 +2972,11 @@
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("User detected:", user.uid);
-                        // alert("DEBUG: User Detected: " + user.email);
+                        alert("DEBUG: User Detected: " + user.email + "\nChecking Database...");
                         landingApp.checkDbAndRedirect(user);
                     } else {
                         console.log("No user signed in.");
-                        // alert("DEBUG: No User Signed In");
+                        alert("DEBUG: No User Signed In (Auth State is null)");
                     }
                 });
             }
