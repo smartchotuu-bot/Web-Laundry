@@ -2114,11 +2114,11 @@
                         btn.innerHTML = originalText;
                     });
             },
-            switchView: (viewName) => {
+            switchView: (viewName, addHistory = true) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
                 if (viewName === 'home') {
                     document.getElementById('view-home').classList.add('active');
-                    homeApp.navTo('home');
+                    homeApp.navTo('home', false); // Don't add history here, handled by wrapper if needed
                 } else if (viewName === 'orders') {
                     document.getElementById('view-orders').classList.add('active');
                     if (typeof ordersApp !== 'undefined') ordersApp.init();
@@ -2126,6 +2126,10 @@
                     document.getElementById('view-account').classList.add('active');
                 } else if (viewName === 'login') {
                     document.getElementById('view-login').classList.add('active');
+                }
+
+                if (addHistory) {
+                    history.pushState({ view: viewName }, '', '#' + viewName);
                 }
             }
         };
@@ -2470,7 +2474,7 @@
                     console.error("Error loading products:", error);
                 });
             },
-            navTo(screen) {
+            navTo(screen, addHistory = true) {
                 // Select the bottom navigation bar within the home view
                 const bottomNav = document.querySelector('#view-home .bottom-nav');
 
@@ -2494,6 +2498,10 @@
                     document.getElementById('nav-home').classList.remove('active');
                     document.getElementById('nav-cart').classList.add('active');
                     this.renderCart();
+                }
+
+                if (addHistory) {
+                    history.pushState({ view: 'home', subView: screen }, '', '#home/' + screen);
                 }
 
             },
@@ -2744,7 +2752,7 @@
             touchStartY: 0,
             touchEndX: 0,
             touchEndY: 0,
-            minSwipeDistance: 50, // Minimum distance for a swipe to be detected (in pixels)
+            minSwipeDistance: 40, // Reduced from 50 for easier swiping
 
             init() {
                 const productList = document.getElementById('product-list');
@@ -2802,11 +2810,44 @@
             }
         };
 
+        // --- HISTORY MANAGER ---
+        const historyManager = {
+            init() {
+                // Set initial state if none exists
+                if (!history.state) {
+                    history.replaceState({ view: 'home', subView: 'home' }, '', '#home');
+                }
+
+                window.addEventListener('popstate', (event) => {
+                    const state = event.state;
+                    if (state) {
+                        this.restoreState(state);
+                    } else {
+                        // Fallback
+                        globalNav.switchView('home', false);
+                    }
+                });
+            },
+
+            restoreState(state) {
+                console.log("Restoring state:", state);
+                if (state.view === 'home') {
+                    globalNav.switchView('home', false);
+                    if (state.subView) {
+                        homeApp.navTo(state.subView, false);
+                    }
+                } else {
+                    globalNav.switchView(state.view, false);
+                }
+            }
+        };
+
         // --- 3. INIT LOGIC ---
         // Ensure DOM is ready before starting
         document.addEventListener('DOMContentLoaded', () => {
             homeApp.init();
             swipeHandler.init(); // Initialize swipe gestures
+            historyManager.init(); // Initialize back button support
 
             if (typeof auth !== 'undefined') {
                 auth.onAuthStateChanged((user) => {
