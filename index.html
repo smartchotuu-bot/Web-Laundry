@@ -2182,7 +2182,8 @@
                         btn.disabled = false;
                     }).catch((error) => {
                         console.error("SMS Error:", error);
-                        accountApp.showToast("Error sending OTP. Try again.");
+                        // Show exact error to help debugging
+                        accountApp.showToast(error.message || "Error sending OTP");
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                         if (window.recaptchaVerifier) window.recaptchaVerifier.reset();
