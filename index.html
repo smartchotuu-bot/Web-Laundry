@@ -2466,9 +2466,18 @@
                 products: [], // Loaded from Firebase
                 tempSelection: {},
                 bags: [],
-                longPressTimer: null
+                longPressTimer: null,
+                pinnedMap: {}
             },
             init() { this.fetchProducts(); },
+            fetchPinnedItems() {
+                const user = auth.currentUser;
+                if (!user) { this.data.pinnedMap = {}; return; }
+                db.ref('users/' + user.uid + '/pinned').on('value', (snapshot) => {
+                    this.data.pinnedMap = snapshot.val() || {};
+                    this.renderProducts();
+                });
+            },
             fetchProducts() {
                 const productsRef = db.ref('products');
                 productsRef.on('value', (snapshot) => {
@@ -2552,34 +2561,94 @@
                 this.renderProducts();
             },
             startPress(e, id) {
-                this.data.longPressTimer = setTimeout(() => { this.togglePin(id); }, 800);
+                // Clear any existing timer to prevent overlaps
+                this.cancelPress();
+
+                // Visual feedback (optional: add scaling or highlight class)
+                const card = e.currentTarget;
+                card.style.transform = "scale(0.96)";
+
+                this.data.longPressTimer = setTimeout(() => {
+                    this.togglePin(id);
+                    // Reset visual
+                    card.style.transform = "scale(1)";
+                }, 600); // Reduced to 600ms for better responsiveness
             },
-            cancelPress() {
-                if (this.data.longPressTimer) { clearTimeout(this.data.longPressTimer); this.data.longPressTimer = null; }
+            cancelPress(e) {
+                if (this.data.longPressTimer) {
+                    clearTimeout(this.data.longPressTimer);
+                    this.data.longPressTimer = null;
+                }
+
+                // Reset visual feedback on all cards (safest)
+                if (e && e.currentTarget) {
+                    e.currentTarget.style.transform = "scale(1)";
+                } else {
+                    document.querySelectorAll('.product-card').forEach(c => c.style.transform = "scale(1)");
+                }
+            },
+            handleTouchMove(e) {
+                // If the user scrolls, cancel the long press
+                this.cancelPress(e);
             },
             togglePin(id) {
-                const prod = this.data.products.find(p => p.id === id);
-                if (prod) {
-                    prod.isPinned = !prod.isPinned;
-                    if (navigator.vibrate) navigator.vibrate(50);
-                    this.renderProducts();
+                const user = auth.currentUser;
+                if (!user) {
+                    accountApp.showToast("Please login to pin items");
+                    return;
                 }
+                // Haptic feedback for success
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+
+                const isPinned = !!(this.data.pinnedMap && this.data.pinnedMap[id]);
+                const updates = {};
+                if (isPinned) {
+                    updates['users/' + user.uid + '/pinned/' + id] = null;
+                    accountApp.showToast("Item unpinned");
+                } else {
+                    updates['users/' + user.uid + '/pinned/' + id] = true;
+                    accountApp.showToast("Item pinned to top");
+                }
+
+                db.ref().update(updates).catch(err => {
+                    console.error("Pinning error", err);
+                    accountApp.showToast("Error updating pin");
+                });
             },
             renderProducts() {
                 const list = document.getElementById('product-list');
                 list.innerHTML = '';
+                const pinnedMap = this.data.pinnedMap || {};
+
+                // Filter by category
                 let visibleProducts = this.data.products.filter(p => p.cat === this.data.activeTab);
-                visibleProducts.sort((a, b) => (a.isPinned === b.isPinned) ? 0 : a.isPinned ? -1 : 1);
-                visibleProducts.forEach(p => {
+
+                const pinned = visibleProducts.filter(p => pinnedMap[p.id]);
+                const unpinned = visibleProducts.filter(p => !pinnedMap[p.id]);
+
+                const createCard = (p, isPinned) => {
                     const currentQty = this.data.tempSelection[p.id] || 0;
                     const card = document.createElement('div');
-                    card.className = `product-card ${p.isPinned ? 'pinned' : ''}`;
+                    card.className = `product-card ${isPinned ? 'pinned' : ''}`;
+
+                    // Prevent context menu (right click) on mobile
+                    card.oncontextmenu = (e) => { e.preventDefault(); return false; };
+
+                    // Mouse Events
                     card.onmousedown = (e) => this.startPress(e, p.id);
-                    card.ontouchstart = (e) => this.startPress(e, p.id);
-                    card.onmouseup = () => this.cancelPress();
-                    card.ontouchend = () => this.cancelPress();
+                    card.onmouseup = (e) => this.cancelPress(e);
+                    card.onmouseleave = (e) => this.cancelPress(e);
+
+                    // Touch Events
+                    card.ontouchstart = (e) => {
+                        // e.preventDefault(); // Do not prevent default, we want scrolling to work
+                        this.startPress(e, p.id);
+                    };
+                    card.ontouchend = (e) => this.cancelPress(e);
+                    card.ontouchmove = (e) => this.handleTouchMove(e);
+
                     card.innerHTML = `
-                        ${p.isPinned ? '<div class="pin-badge"><i class="fas fa-thumbtack"></i></div>' : ''}
+                        ${isPinned ? '<div class="pin-badge"><i class="fas fa-thumbtack"></i></div>' : ''}
                         <div class="prod-info">
                             <div class="prod-img-box">
                                 <img src="${p.img}" class="prod-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
@@ -2592,11 +2661,26 @@
                             <span class="count-val">${currentQty}</span>
                             <div class="btn-count active" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="homeApp.updateTemp(${p.id}, 1)">+</div>
                         </div>`;
-                    list.appendChild(card);
-                });
+                    return card;
+                };
+
+                if (pinned.length > 0) {
+                    // Just append pinned items first, no text headers
+                    pinned.forEach(p => list.appendChild(createCard(p, true)));
+
+                    // Optional: Add a subtle visual divider if needed, or just space
+                    if (unpinned.length > 0) {
+                        const divider = document.createElement('div');
+                        divider.style.height = "10px"; // Small gap
+                        list.appendChild(divider);
+                    }
+                }
+
+                unpinned.forEach(p => list.appendChild(createCard(p, false)));
                 this.updateFloatingBar();
             },
             updateTemp(id, change) {
+                if (navigator.vibrate) navigator.vibrate(20);
                 if (!this.data.tempSelection[id]) this.data.tempSelection[id] = 0;
                 this.data.tempSelection[id] += change;
                 if (this.data.tempSelection[id] <= 0) delete this.data.tempSelection[id];
@@ -2872,8 +2956,11 @@
                     if (user) {
                         console.log("User detected:", user.uid);
                         landingApp.checkDbAndRedirect(user);
+                        homeApp.fetchPinnedItems();
                     } else {
                         console.log("No user signed in.");
+                        homeApp.data.pinnedMap = {};
+                        homeApp.renderProducts();
                     }
                 });
             }
