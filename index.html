@@ -144,6 +144,12 @@
             padding-bottom: 0;
         }
 
+        #view-info.view-section {
+            padding-bottom: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
         .view-section.active {
             display: block;
         }
@@ -1537,6 +1543,48 @@
         .area-suggestion-item.no-results:hover {
             background: transparent;
         }
+
+        /* App Info Styles */
+        .slider-container {
+            overflow: hidden;
+            touch-action: pan-y;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+        }
+
+        .info-dot {
+            transition: all 0.3s ease;
+        }
+
+        .info-dot.active {
+            transform: scale(1.3);
+        }
+
+        .smooth-color {
+            transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                stroke 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @view-transition {
+            navigation: auto;
+        }
     </style>
 </head>
 
@@ -1732,6 +1780,42 @@
         </div>
     </div>
 
+    <div id="view-info" class="view-section">
+        <div id="info-app-container" class="smooth-color"
+            style="height: 100vh; width: 100%; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div id="info-header" class="header smooth-color"
+                style="border-bottom: 1px solid rgba(255,255,255,0.2); padding: 16px 16px;">
+                <button class="back-btn" onclick="globalNav.switchView('account')"
+                    style="border:none; background:none; font-size:16px; margin-right:10px; padding: 0;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h2 class="smooth-color" style="font-size: 16px; margin: 0;">App Info</h2>
+                <div style="width: 24px;"></div>
+            </div>
+
+            <!-- Slider Container -->
+            <div class="slider-container">
+                <div id="info-slider" class="slider-wrapper">
+                    <!-- Slides will be injected here -->
+                </div>
+            </div>
+
+            <!-- Footer Navigation -->
+            <div id="info-footer" class="smooth-color"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 10;">
+                <button id="info-prev-btn" onclick="infoSlider.prev()" class="smooth-color"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; transition: opacity 0.3s;"
+                    disabled>‹</button>
+                <div id="info-dots" style="display: flex; gap: 12px;">
+                    <!-- Dots will be injected here -->
+                </div>
+                <button id="info-next-btn" onclick="infoSlider.next()" class="smooth-color"
+                    style="background: none; border: none; font-size: 24px; cursor: pointer; transition: opacity 0.3s;">›</button>
+            </div>
+        </div>
+    </div>
+
     <div id="view-account" class="view-section">
         <div class="account-bg-layer">
 
@@ -1863,20 +1947,175 @@
     </div>
 
     <div class="modal-overlay" id="infoModal">
-        <div class="modal">
-            <h3 style="margin-bottom: 15px; font-size: 18px;">App Info & Pricing</h3>
+        <div class="modal"
+            style="max-width: 600px; width: 90%; height: 80vh; max-height: 700px; padding: 0; overflow: hidden; border-radius: 24px;">
+            <div id="info-app-container"
+                style="height: 100%; width: 100%; display: flex; flex-direction: column; background: #e0f2fe;">
+                <!-- Header -->
+                <div id="info-header"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #bae6fd; border-bottom: 1px solid rgba(255,255,255,0.2);">
+                    <button onclick="accountApp.closeAppInfo()"
+                        style="background: none; border: none; cursor: pointer; padding: 8px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0c4a6e" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <h1 style="font-size: 18px; font-weight: 700; color: #0c4a6e; margin: 0;">Info</h1>
+                    <div style="width: 40px;"></div>
+                </div>
 
-            <div style="text-align: left; margin-bottom: 25px;">
-                <h4 style="font-size: 14px; color: var(--text-main); margin-bottom: 10px;">How it Works</h4>
-                <p style="font-size: 12px; color: var(--text-sub); line-height: 1.6;">
-                    1. <b>Login</b> with your number.<br>
-                    2. <b>Select items</b> & add to bag.<br>
-                    3. <b>Place Order</b> & relax.<br>
-                    4. <b>Pickup & Delivery</b> at your door.
-                </p>
+                <!-- Slider Container -->
+                <div style="flex: 1; overflow: hidden; position: relative;">
+                    <div id="info-slider"
+                        style="display: flex; height: 100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                        <!-- Page 1 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #0c4a6e; font-weight: 700; margin-bottom: 12px;">
+                                        The Solution to Laundry Day</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #0c4a6e; line-height: 1.7; opacity: 0.9;">Is your
+                                        laundry pile taking over your living space? Reclaim your weekends with our
+                                        innovative app. We handle the washing, drying, and folding so you can focus on
+                                        what truly matters.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 2 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #581c87; font-weight: 700; margin-bottom: 12px;">
+                                        Doorstep Convenience</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #581c87; line-height: 1.7; opacity: 0.9;">
+                                        Convenience is the heartbeat of our service. Our seamless pickup and delivery
+                                        system ensures you never have to step foot in a laundromat again. We work
+                                        entirely around your busy schedule.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 3 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #14532d; font-weight: 700; margin-bottom: 12px;">
+                                        Professional Care & Quality</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #14532d; line-height: 1.7; opacity: 0.9;">Your
+                                        clothes are always in expert hands with us. We use top-tier equipment and
+                                        premium detergents to ensure every garment returns to you fresh, clean, and
+                                        neatly folded.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 4 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #7c2d12; font-weight: 700; margin-bottom: 12px;">
+                                        Effortless App Experience</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #7c2d12; line-height: 1.7; opacity: 0.9;">Using
+                                        our app is incredibly intuitive and fast. With a user-friendly interface, you
+                                        can customize your washing preferences, track your order in real-time, and
+                                        manage payments securely.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 5 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #881337; font-weight: 700; margin-bottom: 12px;">
+                                        Affordable Pricing</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #881337; line-height: 1.7; opacity: 0.9;">Quality
+                                        laundry service should not break the bank. Our transparent pricing structure
+                                        offers exceptional value with no hidden fees. Enjoy premium care at prices that
+                                        respect your budget.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 6 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #134e4a; font-weight: 700; margin-bottom: 12px;">
+                                        Eco-Friendly Commitment</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #134e4a; line-height: 1.7; opacity: 0.9;">We care
+                                        about your clothes and our planet. Our green washing practices use biodegradable
+                                        detergents and energy-efficient machines that reduce water consumption.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Page 7 -->
+                        <div class="info-slide"
+                            style="min-width: 100%; display: flex; align-items: center; justify-content: center; padding: 24px 20px;">
+                            <div style="max-width: 500px; text-align: center;">
+                                <div
+                                    style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 32px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                    <h2 class="info-title"
+                                        style="font-size: 24px; color: #312e81; font-weight: 700; margin-bottom: 12px;">
+                                        Ready to Get Started?</h2>
+                                    <p class="info-text"
+                                        style="font-size: 16px; color: #312e81; line-height: 1.7; opacity: 0.9;">Join
+                                        thousands of satisfied customers who have already transformed their laundry
+                                        routine. Download our app today and enjoy your first order with a special
+                                        welcome discount.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div id="info-footer"
+                    style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: #bae6fd; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <button id="info-prev-btn" onclick="infoSlider.prev()"
+                        style="background: none; border: none; font-size: 32px; color: #0284c7; cursor: pointer; opacity: 0.3;"
+                        disabled>‹</button>
+                    <div id="info-dots" style="display: flex; gap: 12px;">
+                        <button class="info-dot active" onclick="infoSlider.goTo(0)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(1)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(2)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(3)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(4)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(5)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                        <button class="info-dot" onclick="infoSlider.goTo(6)"
+                            style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; opacity: 0.3; cursor: pointer; transition: all 0.3s;"></button>
+                    </div>
+                    <button id="info-next-btn" onclick="infoSlider.next()"
+                        style="background: none; border: none; font-size: 32px; color: #0284c7; cursor: pointer;">›</button>
+                </div>
             </div>
-            <button class="btn-primary" onclick="document.getElementById('infoModal').style.display='none'"
-                style="width:100%; border:none; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;">Close</button>
         </div>
     </div>
 
@@ -2035,7 +2274,11 @@
                 x.innerText = msg; x.className = "show";
                 setTimeout(() => x.className = x.className.replace("show", ""), 3000);
             },
-            showAppInfo() { document.getElementById('infoModal').style.display = 'flex'; },
+            showAppInfo() {
+                globalNav.switchView('info');
+                // Initialize slider and apply colors immediately
+                setTimeout(() => infoSlider.init(), 10);
+            },
             toggleTheme() {
                 const body = document.body;
                 const isDark = body.getAttribute('data-theme') === 'dark';
@@ -2044,6 +2287,243 @@
                 document.getElementById('theme-toggle-check').checked = (newTheme === 'dark');
                 const textEl = document.querySelector('[data-key="themeSub"]');
                 if (textEl) textEl.innerText = newTheme === 'dark' ? 'Dark Mode' : 'Light Mode';
+            }
+        };
+
+        // Info Slider with page themes
+        const infoSlider = {
+            currentPage: 0,
+            pages: [
+                { title: 'The Solution to Laundry Day', text: 'Is your laundry pile taking over your living space? Reclaim your weekends with our innovative app. We handle the washing, drying, and folding so you can focus on what truly matters. No more hauling heavy bags or waiting for wash cycles to finish. Simply tap, schedule, and relax while we take care of the dirty work. Experience true freedom from chores.', icon: '🧺' },
+                { title: 'Doorstep Convenience', text: 'Convenience is the heartbeat of our service. Our seamless pickup and delivery system ensures you never have to step foot in a laundromat again. Whether you are at home or the office, our friendly drivers come directly to your doorstep. We work entirely around your busy schedule, offering flexible time slots that fit perfectly into your life, morning or night.', icon: '🚪' },
+                { title: 'Professional Care & Quality', text: 'Your clothes are always in expert hands with us. We use top-tier equipment and premium detergents to ensure every garment returns to you fresh, clean, and neatly folded. From delicate silks to heavy bedding, our professional team treats every item with the utmost care. Say goodbye to shrinking sweaters and fading colors, and hello to a wardrobe that looks brand new.', icon: '✨' },
+                { title: 'Effortless App Experience', text: 'Using our app is incredibly intuitive and fast. With a user-friendly interface, you can customize your washing preferences, track your order in real-time, and manage payments securely. Need hypoallergenic soap or hang-dry service? Just select your options with a few distinct taps. We designed the entire process to be effortless, putting total control of your laundry right in your pocket.', icon: '📱' },
+                { title: 'Affordable Pricing', text: 'Quality laundry service should not break the bank. Our transparent pricing structure offers exceptional value with no hidden fees. Choose from flexible plans that match your lifestyle, whether you need weekly service or occasional deep cleans. Enjoy premium care at prices that respect your budget, with special discounts for regular customers.', icon: '💰' },
+                { title: 'Eco-Friendly Commitment', text: 'We care about your clothes and our planet. Our green washing practices use biodegradable detergents and energy-efficient machines that reduce water consumption. We partner with local sustainable initiatives and use electric vehicles for deliveries. Feel good knowing that every load you send helps support a cleaner, healthier environment for future generations.', icon: '🌿' },
+                { title: 'Ready to Get Started?', text: 'Join thousands of satisfied customers who have already transformed their laundry routine. Download our app today and enjoy your first order with a special welcome discount. Let us prove how easy, convenient, and delightful laundry day can truly be. Your free time is waiting, and so are we. Welcome to the future of laundry care.', icon: '🚀' }
+            ],
+
+            pageThemes: [
+                { bg: '#e0f2fe', surface: '#bae6fd', text: '#0c4a6e', accent: '#0284c7' }, // Page 1: Sky Blue
+                { bg: '#f3e8ff', surface: '#e9d5ff', text: '#581c87', accent: '#9333ea' }, // Page 2: Purple
+                { bg: '#dcfce7', surface: '#bbf7d0', text: '#14532d', accent: '#16a34a' }, // Page 3: Green
+                { bg: '#ffedd5', surface: '#fed7aa', text: '#7c2d12', accent: '#ea580c' }, // Page 4: Orange
+                { bg: '#ffe4e6', surface: '#fecdd3', text: '#881337', accent: '#e11d48' }, // Page 5: Rose
+                { bg: '#ccfbf1', surface: '#99f6e4', text: '#134e4a', accent: '#0d9488' }, // Page 6: Teal
+                { bg: '#e0e7ff', surface: '#c7d2fe', text: '#312e81', accent: '#4f46e5' }  // Page 7: Indigo
+            ],
+
+            init() {
+                this.currentPage = 0;
+                this.renderSlides();
+                this.renderDots();
+                this.updateUI();
+                this.setupSwipeHandlers();
+            },
+
+            reset() {
+                this.currentPage = 0;
+            },
+
+            createSlide(page, index, theme) {
+                return `
+                 <div class="slide" style="min-width: 100%;"> 
+                    <div style="max-width: 500px; text-align: center; padding: 0 16px;">
+                        <div style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                            <h2 class="info-title" style="font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 24px; color: ${theme.text}; font-weight: 700; margin-bottom: 12px; transition: color 0.5s ease;">${page.title}</h2>
+                            <p class="info-text" style="font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; color: ${theme.text}; line-height: 1.7; opacity: 0.9; transition: color 0.5s ease;">${page.text}</p>
+                        </div>
+                    </div>
+                 </div>`;
+            },
+
+            renderSlides() {
+                const slider = document.getElementById('info-slider');
+                if (!slider) return;
+                slider.innerHTML = this.pages.map((page, index) => this.createSlide(page, index, this.pageThemes[index])).join('');
+            },
+
+            renderDots() {
+                const dotsContainer = document.getElementById('info-dots');
+                if (!dotsContainer) return;
+                dotsContainer.innerHTML = this.pages.map((_, index) => `
+                    <button class="info-dot" onclick="infoSlider.goTo(${index})"
+                        style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; cursor: pointer; transition: all 0.3s;"
+                        aria-label="Go to slide ${index + 1}"></button>
+                `).join('');
+            },
+
+            updateUI() {
+                const slider = document.getElementById('info-slider');
+                if (!slider) return;
+
+                const theme = this.pageThemes[this.currentPage];
+                const totalPages = this.pages.length;
+
+                // Update slider position
+                slider.style.transform = `translateX(-${this.currentPage * 100}%)`;
+
+                // Update container
+                const container = document.getElementById('info-app-container');
+                if (container) {
+                    container.style.background = theme.bg;
+                    container.style.transition = 'background 0.5s ease';
+                }
+
+                // Update Header
+                const header = document.getElementById('info-header');
+                if (header) {
+                    header.style.background = theme.surface;
+                    header.style.transition = 'background 0.5s ease';
+
+                    const h2 = header.querySelector('h2');
+                    if (h2) h2.style.color = theme.text;
+
+                    const backBtn = header.querySelector('.back-btn');
+                    if (backBtn) backBtn.style.color = theme.text;
+                }
+
+                // Update Footer
+                const footer = document.getElementById('info-footer');
+                if (footer) {
+                    footer.style.background = theme.surface;
+                    footer.style.transition = 'background 0.5s ease';
+                }
+
+                // Update Slide Text Colors (Transition effect)
+                const slides = document.querySelectorAll('.slide');
+                slides.forEach(slide => {
+                    const title = slide.querySelector('.info-title');
+                    const text = slide.querySelector('.info-text');
+                    if (title) title.style.color = theme.text;
+                    if (text) text.style.color = theme.text;
+                });
+
+                // Update dots
+                const dots = document.querySelectorAll('.info-dot');
+                dots.forEach((dot, index) => {
+                    if (index === this.currentPage) {
+                        dot.classList.add('active');
+                        dot.style.background = theme.accent;
+                        dot.style.opacity = '1';
+                    } else {
+                        dot.classList.remove('active');
+                        dot.style.background = theme.text;
+                        dot.style.opacity = '0.3';
+                    }
+                });
+
+                // Update navigation buttons
+                const prevBtn = document.getElementById('info-prev-btn');
+                const nextBtn = document.getElementById('info-next-btn');
+
+                if (prevBtn) {
+                    prevBtn.style.color = theme.accent;
+                    prevBtn.style.opacity = this.currentPage === 0 ? '0.3' : '1';
+                    prevBtn.disabled = this.currentPage === 0;
+                }
+
+                if (nextBtn) {
+                    nextBtn.style.color = theme.accent;
+                    nextBtn.style.opacity = this.currentPage === totalPages - 1 ? '0.3' : '1';
+                    nextBtn.disabled = this.currentPage === totalPages - 1;
+                }
+            },
+
+            next() {
+                if (this.currentPage < this.pages.length - 1) {
+                    this.currentPage++;
+                    this.updateUI();
+                    if (navigator.vibrate) navigator.vibrate(15);
+                }
+            },
+
+            prev() {
+                if (this.currentPage > 0) {
+                    this.currentPage--;
+                    this.updateUI();
+                    if (navigator.vibrate) navigator.vibrate(15);
+                }
+            },
+
+            goTo(index) {
+                if (index >= 0 && index < this.pages.length) {
+                    this.currentPage = index;
+                    this.updateUI();
+                    if (navigator.vibrate) navigator.vibrate(15);
+                }
+            },
+
+            setupSwipeHandlers() {
+                const slider = document.getElementById('info-slider');
+                if (!slider) return;
+
+                let startX = 0;
+                let currentX = 0;
+                let isDragging = false;
+                let lastTouchTime = 0;
+
+                const handleStart = (e) => {
+                    if (e.type === 'mousedown' && (Date.now() - lastTouchTime < 1000)) return;
+                    if (e.type === 'touchstart') lastTouchTime = Date.now();
+
+                    isDragging = true;
+                    startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+                    slider.style.transition = 'none';
+                };
+
+                const handleMove = (e) => {
+                    if (!isDragging) return;
+                    currentX = e.type.includes('mouse') ? e.pageX : (e.touches && e.touches[0] ? e.touches[0].pageX : currentX);
+                    const diff = currentX - startX;
+                    // Provide resistance or free scrolling
+                    slider.style.transform = `translateX(calc(-${this.currentPage * 100}% + ${diff}px))`;
+                };
+
+                const handleEnd = (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    const diff = currentX - startX;
+                    slider.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+
+                    // Swipe threshold
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && this.currentPage > 0) {
+                            this.prev();
+                        } else if (diff < 0 && this.currentPage < this.pages.length - 1) {
+                            this.next();
+                        } else {
+                            this.updateUI(); // Reset position
+                        }
+                    }
+                    // Tap detection (minimal movement)
+                    else if (Math.abs(diff) < 15) {
+                        const screenWidth = window.innerWidth;
+                        const clickX = startX; // approximate tap location
+
+                        // Left 40% -> Previous
+                        if (clickX < screenWidth * 0.4) {
+                            this.prev();
+                        }
+                        // Right 40% -> Next ( > 60%)
+                        else if (clickX > screenWidth * 0.6) {
+                            this.next();
+                        }
+                        else {
+                            this.updateUI();
+                        }
+                    }
+                    else {
+                        this.updateUI(); // Reset position
+                    }
+                };
+
+                slider.addEventListener('mousedown', handleStart);
+                slider.addEventListener('touchstart', handleStart, { passive: true });
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('touchmove', handleMove, { passive: true });
+                document.addEventListener('mouseup', handleEnd);
+                document.addEventListener('touchend', handleEnd);
             }
         };
 
@@ -2149,6 +2629,8 @@
                     document.getElementById('view-account').classList.add('active');
                 } else if (viewName === 'login') {
                     document.getElementById('view-login').classList.add('active');
+                } else if (viewName === 'info') {
+                    document.getElementById('view-info').classList.add('active');
                 }
 
                 if (addHistory) {
