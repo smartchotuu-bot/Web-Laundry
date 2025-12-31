@@ -16,65 +16,156 @@
     <style>
         /* --- COLORHUNT PALETTE THEME --- */
         :root {
-            /* Palette: #061e29, #1d546d, #5f9598, #f3f4f4 */
-            --col-deep-night: #061e29;
-            /* Darkest - Text/Dark BG */
-            --col-petrol: #1d546d;
-            /* Dark Blue - Primary Brand */
-            --col-teal: #5f9598;
-            /* Muted Teal - Accents */
-            --col-mist: #f3f4f4;
-            /* Lightest - Backgrounds */
-            --col-pure-white: #FFFFFF;
-            /* Card Backgrounds */
-
-            /* UI Semantics - Light Theme */
-            --bg-body: var(--col-mist);
-            --bg-card: var(--col-pure-white);
-            --bg-panel: #E8EBEB;
-            /* Slightly darker mist for contrast */
-
-            --text-main: var(--col-deep-night);
-            --text-sub: var(--col-petrol);
-            --text-on-primary: var(--col-mist);
-
-            --border-color: #D0D7D9;
-            /* Mixed mist/teal for borders */
-            --shadow-subtle: 0 4px 12px rgba(6, 30, 41, 0.08);
-            --shadow-strong: 0 8px 24px rgba(6, 30, 41, 0.15);
-
-            --primary-action: var(--col-petrol);
-            --primary-action-text: var(--col-mist);
-            --secondary-action: var(--col-teal);
+            /* Default Light Theme - Aesthetic Palette */
+            /* Palette: #66545e, #a39193, #aa6f73, #eea990, #f6e0b5 */
+            --bg-body: #f6e0b5;
+            /* Cream/Beige Background */
+            --bg-card: #ffffff;
+            /* White Cards */
+            --bg-panel: #fffbf5;
+            /* Lighter Panel */
+            --text-main: #66545e;
+            /* Dark Mauve */
+            --text-sub: #a39193;
+            /* Dusty Pink */
+            --text-on-primary: #ffffff;
+            --border-color: #eea990;
+            /* Peach Border */
+            --primary-action: #aa6f73;
+            /* Rose Action */
+            --primary-action-text: #ffffff;
+            --shadow-subtle: 0 4px 12px rgba(102, 84, 94, 0.08);
+            --shadow-strong: 0 8px 24px rgba(102, 84, 94, 0.15);
 
             /* Dimensions */
             --card-radius: 20px;
             --item-thickness: 16px;
             --touch-target: 44px;
-
-            /* Safe Areas */
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Dark Theme */
+        /* Dark Theme - Updated Palette (Light Mode Variant) */
         [data-theme="dark"] {
-            --bg-body: var(--col-deep-night);
-            --bg-card: #0A2535;
-            /* Slightly lighter deep night */
-            --bg-panel: #0D2E42;
+            /* Palette: #3e204f, #5a4565, #cec9d6, #e2dbe9, #bcaecc */
+            --bg-body: #e2dbe9;
+            /* Lightest Lilac BG */
+            --bg-card: #ffffff;
+            /* White Cards */
+            --bg-panel: #f3f5f6;
+            --text-main: #3e204f;
+            /* Deepest Purple Text */
+            --text-sub: #5a4565;
+            /* Muted Purple Text */
+            --text-on-primary: #ffffff;
+            --border-color: #cec9d6;
+            /* Light Grey/Lilac Border */
+            --primary-action: #5a4565;
+            /* Deep Purple Action */
+            --primary-action-text: #ffffff;
+            --shadow-subtle: 0 4px 12px rgba(62, 32, 79, 0.08);
+            --shadow-strong: 0 8px 24px rgba(62, 32, 79, 0.15);
+        }
 
-            --text-main: var(--col-mist);
-            --text-sub: var(--col-teal);
-            --text-on-primary: var(--col-deep-night);
+        /* Midnight Blue -> Pastel Dream Theme */
+        [data-theme="blue"] {
+            /* Palette: #f2e2e2, #f4dae7, #fbe4dd, #eedeff, #fbf7f7 */
+            --bg-body: #fbf7f7;
+            /* Lightest White/Pink */
+            --bg-card: #ffffff;
+            /* White */
+            --bg-panel: #eedeff;
+            /* Lavender Panel */
+            --text-main: #4a3b52;
+            /* Deep Purple/Grey for contrast */
+            --text-sub: #887691;
+            /* Muted Purple */
+            --text-on-primary: #4a3b52;
+            --border-color: #f4dae7;
+            /* Pink Border */
+            --primary-action: #fbe4dd;
+            /* Peach Action */
+            --primary-action-text: #4a3b52;
+            --shadow-subtle: 0 4px 12px rgba(244, 218, 231, 0.4);
+            --shadow-strong: 0 8px 24px rgba(238, 222, 255, 0.5);
+        }
 
-            --border-color: #1d546d;
-            --shadow-subtle: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.5);
+        /* Forest Green Theme */
+        /* Forest Green Theme - Updated Palette (Light Mode) */
+        [data-theme="green"] {
+            /* Palette: #e4fde1, #8acb88, #519872, #3b5249, #1b3022 */
+            --bg-body: #e4fde1;
+            /* Hint of Green (Lightest) */
+            --bg-card: #ffffff;
+            /* White Cards */
+            --bg-panel: #d6f5d3;
+            /* Slightly darker than body for panels */
+            --text-main: #1b3022;
+            /* Celtic (Darkest Green) */
+            --text-sub: #3b5249;
+            /* Mineral Green */
+            --text-on-primary: #ffffff;
+            --border-color: #8acb88;
+            /* De York */
+            --primary-action: #519872;
+            /* Aqua Forest */
+            --primary-action-text: #ffffff;
+            --shadow-subtle: 0 4px 12px rgba(27, 48, 34, 0.08);
+            --shadow-strong: 0 8px 24px rgba(27, 48, 34, 0.15);
+        }
 
-            --primary-action: var(--col-teal);
-            /* Teal pops on dark background */
-            --primary-action-text: var(--col-deep-night);
+        /* Urban Light Theme - Shades of Teal */
+        [data-theme="purple"] {
+            /* Palette: #b2d8d8, #66b2b2, #008080, #006666, #004c4c */
+            --bg-body: #b2d8d8;
+            /* Powder Teal */
+            --bg-card: #f8ffff;
+            /* Very Light Teal Tint */
+            --bg-panel: #66b2b2;
+            /* Medium Teal Panel */
+            --text-main: #004c4c;
+            /* Darkest Teal */
+            --text-sub: #006666;
+            /* Dark Teal */
+            --text-on-primary: #ffffff;
+            --border-color: #66b2b2;
+            /* Medium Teal */
+            --primary-action: #008080;
+            /* Teal Action */
+            --primary-action-text: #ffffff;
+            --shadow-subtle: 0 4px 12px rgba(0, 76, 76, 0.1);
+            --shadow-strong: 0 8px 24px rgba(0, 76, 76, 0.2);
+        }
+
+        /* Theme Card Styles */
+        .theme-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .theme-card.active {
+            border-color: var(--primary-action);
+            background: var(--bg-panel);
+            transform: scale(1.02);
+        }
+
+        .theme-colors {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -479,61 +570,82 @@
 
         .tabs {
             display: flex;
-            padding: 12px 16px;
-            /* Reduced from 15px 20px */
-            gap: 10px;
-            /* Reduced from 12px */
-            /* Reduced from 10px */
+            justify-content: center;
+            /* Center the tabs */
+            padding: 10px 16px;
+            gap: 15px;
             position: relative;
+            background: transparent;
         }
 
         .tab {
-            flex: 1;
+            flex: 0 1 auto;
+            /* Don't stretch */
             text-align: center;
-            padding: 6px 12px;
-            /* Reduced from 8px 12px */
-            border-radius: 50px;
-            font-size: 12px;
-            /* Reduced from 13px */
-            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
+            background: transparent;
+            /* No background by default */
             color: var(--text-sub);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid transparent;
-            position: relative;
-            overflow: hidden;
-            min-height: 36px;
+            border: 1px solid var(--border-color);
+            /* Subtle outline */
+            transition: all 0.2s ease;
+            min-width: 90px;
+            /* Consistent width */
         }
 
         .tab::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            display: none;
+            /* Remove ripple effect for cleaner look */
         }
 
-        .tab:active::before {
-            width: 300px;
-            height: 300px;
+        /* App Info Card Styling */
+        .info-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .info-title {
+            color: var(--text-main) !important;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .info-text {
+            color: var(--text-sub) !important;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .tab:active {
+            transform: scale(0.96);
         }
 
         .tab.active {
-            background: var(--col-deep-night);
-            /* Dark BG for active tab */
-            color: var(--col-mist);
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(6, 30, 41, 0.2);
-            border: 1px solid var(--col-deep-night);
-            transform: scale(1.02);
-            /* Removed backdrop-filter */
+            background: var(--text-main);
+            /* Strong contrast */
+            color: var(--bg-body);
+            /* Inverted text */
+            border-color: var(--text-main);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-1px);
         }
+
+
 
         /* Product list with swipe support */
         #product-list {
@@ -1590,6 +1702,8 @@
 
 <body data-theme="light">
 
+
+
     <div id="view-landing" class="view-section active">
         <div class="landing-container">
             <div class="logo-box">
@@ -1614,6 +1728,82 @@
                 </svg>
                 Continue with Google
             </button>
+        </div>
+    </div>
+
+    <div id="view-theme" class="view-section">
+        <div class="navbar"
+            style="position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg-body); box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <div class="nav-left" onclick="globalNav.switchView('account')"
+                style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+                <i class="fas fa-arrow-left" style="font-size: 18px;"></i>
+            </div>
+            <div class="nav-title"
+                style="flex: 1; text-align: center; font-size: 16px; font-weight: 600; padding-right: 40px;">Select
+                Theme</div>
+            <div class="nav-right" style="width: auto;">
+                <button class="save-btn" onclick="themeApp.saveTheme()"
+                    style="background: var(--primary-action); color: var(--primary-action-text); border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    Save
+                </button>
+            </div>
+        </div>
+
+        <div class="theme-list-container" style="padding: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <!-- Light Theme -->
+            <!-- Light Theme (Aesthetic) -->
+            <div class="theme-card" onclick="themeApp.select('light')" id="theme-card-light">
+                <div style="font-weight: 600; font-size: 15px;">Aesthetic (Light)</div>
+                <div class="theme-colors">
+                    <div class="theme-color-dot" style="background:#f6e0b5; border: 1px solid #ccc;"></div> <!-- Bg -->
+                    <div class="theme-color-dot" style="background:#66545e;"></div> <!-- Text -->
+                    <div class="theme-color-dot" style="background:#aa6f73;"></div> <!-- Accent -->
+                </div>
+            </div>
+
+            <!-- Dark Theme (Updated) -->
+            <!-- Dark Theme (Updated) -->
+            <div class="theme-card" onclick="themeApp.select('dark')" id="theme-card-dark">
+                <div style="font-weight: 600; font-size: 15px;">Lavender (Dark)</div>
+                <div class="theme-colors">
+                    <div class="theme-color-dot" style="background:#e2dbe9; border: 1px solid #ccc;"></div>
+                    <!-- Light Background -->
+                    <div class="theme-color-dot" style="background:#3e204f;"></div> <!-- Dark Text -->
+                    <div class="theme-color-dot" style="background:#5a4565;"></div> <!-- Accent -->
+                </div>
+            </div>
+
+            <!-- Pastel Dream Theme (Previously Blue) -->
+            <div class="theme-card" onclick="themeApp.select('blue')" id="theme-card-blue">
+                <div style="font-weight: 600; font-size: 15px;">Baby Girl</div>
+                <div class="theme-colors">
+                    <div class="theme-color-dot" style="background:#fbf7f7; border: 1px solid #ccc;"></div> <!-- Bg -->
+                    <div class="theme-color-dot" style="background:#eedeff;"></div> <!-- Lavender -->
+                    <div class="theme-color-dot" style="background:#f4dae7;"></div> <!-- Pink -->
+                </div>
+            </div>
+
+            <!-- Forest Green Theme (Light Mode) -->
+            <div class="theme-card" onclick="themeApp.select('green')" id="theme-card-green">
+                <div style="font-weight: 600; font-size: 15px;">Nature (Light)</div>
+                <div class="theme-colors">
+                    <div class="theme-color-dot" style="background:#e4fde1; border: 1px solid #ccc;"></div>
+                    <!-- Light Bg -->
+                    <div class="theme-color-dot" style="background:#1b3022;"></div> <!-- Celtic Text -->
+                    <div class="theme-color-dot" style="background:#519872;"></div> <!-- Aqua Forest -->
+                </div>
+            </div>
+
+            <!-- Shades of Teal (Previously Urban Light) -->
+            <div class="theme-card" onclick="themeApp.select('purple')" id="theme-card-purple">
+                <div style="font-weight: 600; font-size: 15px;">Teal Gradient</div>
+                <div class="theme-colors">
+                    <div class="theme-color-dot" style="background:#b2d8d8; border: 1px solid #ccc;"></div>
+                    <!-- Powder Teal -->
+                    <div class="theme-color-dot" style="background:#66b2b2;"></div> <!-- Medium Teal -->
+                    <div class="theme-color-dot" style="background:#008080;"></div> <!-- Teal -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1892,44 +2082,33 @@
                     <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
                 </div>
 
-                <div class="st-row" onclick="window.open('https://wa.me/919876543210', '_blank')">
-                    <div class="st-left" style="display:flex; gap:15px; align-items:center;">
-                        <div class="st-icon-bg" style="background:rgba(76, 175, 80, 0.1); color:#4CAF50"><i
-                                class="far fa-comment-dots"></i></div>
-                        <div class="st-info">
-                            <h4 style="font-size:14px; font-weight:600;">Help Support</h4>
-                            <p style="font-size:11px; color:var(--text-sub);">WhatsApp Chat</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
-                </div>
 
-                <div class="st-row">
-                    <div class="st-left" style="display:flex; gap:15px; align-items:center;">
-                        <div class="st-icon-bg" style="background:rgba(255, 152, 0, 0.1); color:#FF9800"><i
-                                class="fas fa-sun"></i></div>
-                        <div class="st-info">
-                            <h4 data-key="themeTitle" style="font-size:14px; font-weight:600;">Theme</h4>
-                            <p data-key="themeSub" style="font-size:11px; color:var(--text-sub);">Dark Mode</p>
-                        </div>
-                    </div>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="theme-toggle-check" onclick="accountApp.toggleTheme()" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
 
                 <div class="st-row" onclick="accountApp.showAppInfo()">
                     <div class="st-left" style="display:flex; gap:15px; align-items:center;">
-                        <div class="st-icon-bg" style="background:#f3e5f5; color:#ab47bc"><i
+                        <div class="st-icon-bg" style="background:#e4fde1; color:#1b3022"><i
                                 class="fas fa-info-circle"></i></div>
                         <div class="st-info">
                             <h4 style="font-size:14px; font-weight:600;">App Info</h4>
-                            <p style="font-size:11px; color:var(--text-sub);">Version 1.0.0</p>
+                            <p style="font-size:11px; color:var(--text-sub);">Version, Features & Support</p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
                 </div>
+
+                <div class="st-row" onclick="themeApp.open()">
+                    <div class="st-left" style="display:flex; gap:15px; align-items:center;">
+                        <div class="st-icon-bg" style="background:rgba(156, 39, 176, 0.1); color:#9c27b0"><i
+                                class="fas fa-palette"></i></div>
+                        <div class="st-info">
+                            <h4 style="font-size:14px; font-weight:600;">App Theme</h4>
+                            <p id="theme-label" style="font-size:11px; color:var(--text-sub);">Select your style</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
+                </div>
+
+
 
                 <div class="st-row" onclick="landingApp.confirmLogout()" style="cursor:pointer">
                     <div class="st-left" style="display:flex; gap:15px; align-items:center;">
@@ -2179,6 +2358,7 @@
     <div id="toast">Data Saved Successfully!</div>
 
     <script>
+
         // Laundry Express App - Main JavaScript Logic
 
         // --- 1. CONFIGURATION & SETUP ---
@@ -2290,48 +2470,132 @@
             }
         };
 
-        // Info Slider with page themes
+        // --- THEME APP LOGIC ---
+        const themeApp = {
+            currentSelection: 'light', // Default
+
+            init() {
+                // Load from storage
+                const savedTheme = localStorage.getItem('laundryTheme') || 'light';
+                this.applyTheme(savedTheme);
+            },
+
+            applyTheme(themeName) {
+                // Remove all theme attributes
+                document.documentElement.removeAttribute('data-theme');
+                // Apply new if not light (default)
+                if (themeName !== 'light') {
+                    document.documentElement.setAttribute('data-theme', themeName);
+                }
+                this.currentSelection = themeName;
+                this.updateLabel(themeName);
+            },
+
+            open() {
+                globalNav.switchView('theme');
+                // Highlight current selection
+                this.select(this.currentSelection, false);
+            },
+
+            select(themeName, updateState = true) {
+                // Visual selection only (unless saving)
+                if (updateState) {
+                    this.currentSelection = themeName;
+                }
+
+                // Update UI cards
+                document.querySelectorAll('.theme-card').forEach(card => card.classList.remove('active'));
+                const targetCard = document.getElementById(`theme-card-${themeName}`);
+                if (targetCard) targetCard.classList.add('active');
+            },
+
+            saveTheme() {
+                this.applyTheme(this.currentSelection);
+                localStorage.setItem('laundryTheme', this.currentSelection);
+                globalNav.switchView('account');
+
+                // Optional: Show toast
+                if (accountApp && accountApp.showToast) {
+                    accountApp.showToast('Theme updated!');
+                }
+            },
+
+            updateLabel(themeName) {
+                const label = document.getElementById('theme-label');
+                if (!label) return;
+
+                const names = {
+                    'light': 'Light Mode',
+                    'dark': 'Dark Mode',
+                    'blue': 'Midnight Blue',
+                    'green': 'Forest Green',
+                    'purple': 'Royal Purple'
+                };
+                label.innerText = names[themeName] || 'Select your style';
+            }
+        };
+
+        // Info Slider with page themes - Updated for Green/Forest Palette & Logic
         const infoSlider = {
             currentPage: 0,
-            pages: [
-                { title: 'The Solution to Laundry Day', text: 'Is your laundry pile taking over your living space? Reclaim your weekends with our innovative app. We handle the washing, drying, and folding so you can focus on what truly matters. No more hauling heavy bags or waiting for wash cycles to finish. Simply tap, schedule, and relax while we take care of the dirty work. Experience true freedom from chores.', icon: '🧺' },
-                { title: 'Doorstep Convenience', text: 'Convenience is the heartbeat of our service. Our seamless pickup and delivery system ensures you never have to step foot in a laundromat again. Whether you are at home or the office, our friendly drivers come directly to your doorstep. We work entirely around your busy schedule, offering flexible time slots that fit perfectly into your life, morning or night.', icon: '🚪' },
-                { title: 'Professional Care & Quality', text: 'Your clothes are always in expert hands with us. We use top-tier equipment and premium detergents to ensure every garment returns to you fresh, clean, and neatly folded. From delicate silks to heavy bedding, our professional team treats every item with the utmost care. Say goodbye to shrinking sweaters and fading colors, and hello to a wardrobe that looks brand new.', icon: '✨' },
-                { title: 'Effortless App Experience', text: 'Using our app is incredibly intuitive and fast. With a user-friendly interface, you can customize your washing preferences, track your order in real-time, and manage payments securely. Need hypoallergenic soap or hang-dry service? Just select your options with a few distinct taps. We designed the entire process to be effortless, putting total control of your laundry right in your pocket.', icon: '📱' },
-                { title: 'Affordable Pricing', text: 'Quality laundry service should not break the bank. Our transparent pricing structure offers exceptional value with no hidden fees. Choose from flexible plans that match your lifestyle, whether you need weekly service or occasional deep cleans. Enjoy premium care at prices that respect your budget, with special discounts for regular customers.', icon: '💰' },
-                { title: 'Eco-Friendly Commitment', text: 'We care about your clothes and our planet. Our green washing practices use biodegradable detergents and energy-efficient machines that reduce water consumption. We partner with local sustainable initiatives and use electric vehicles for deliveries. Feel good knowing that every load you send helps support a cleaner, healthier environment for future generations.', icon: '🌿' },
-                { title: 'Ready to Get Started?', text: 'Join thousands of satisfied customers who have already transformed their laundry routine. Download our app today and enjoy your first order with a special welcome discount. Let us prove how easy, convenient, and delightful laundry day can truly be. Your free time is waiting, and so are we. Welcome to the future of laundry care.', icon: '🚀' }
+            touchStartX: 0,
+            touchStartY: 0,
+
+            // Default configuration
+            defaultConfig: {
+                pages: [
+                    { title: 'The Solution to Laundry Day', text: 'Is your laundry pile taking over your living space? Reclaim your weekends with our innovative app. We handle the washing, drying, and folding so you can focus on what truly matters. No more hauling heavy bags or waiting for wash cycles to finish. Simply tap, schedule, and relax while we take care of the dirty work. Experience true freedom from chores.', icon: '🧺' },
+                    { title: 'Doorstep Convenience', text: 'Convenience is the heartbeat of our service. Our seamless pickup and delivery system ensures you never have to step foot in a laundromat again. Whether you are at home or the office, our friendly drivers come directly to your doorstep. We work entirely around your busy schedule, offering flexible time slots that fit perfectly into your life, morning or night.', icon: '🚪' },
+                    { title: 'Professional Care & Quality', text: 'Your clothes are always in expert hands with us. We use top-tier equipment and premium detergents to ensure every garment returns to you fresh, clean, and neatly folded. From delicate silks to heavy bedding, our professional team treats every item with the utmost care. Say goodbye to shrinking sweaters and fading colors, and hello to a wardrobe that looks brand new.', icon: '✨' },
+                    { title: 'Effortless App Experience', text: 'Using our app is incredibly intuitive and fast. With a user-friendly interface, you can customize your washing preferences, track your order in real-time, and manage payments securely. Need hypoallergenic soap or hang-dry service? Just select your options with a few distinct taps. We designed the entire process to be effortless, putting total control of your laundry right in your pocket.', icon: '📱' },
+                    { title: 'Affordable Pricing', text: 'Quality laundry service should not break the bank. Our transparent pricing structure offers exceptional value with no hidden fees. Choose from flexible plans that match your lifestyle, whether you need weekly service or occasional deep cleans. Enjoy premium care at prices that respect your budget, with special discounts for regular customers.', icon: '💰' },
+                    { title: 'Eco-Friendly Commitment', text: 'We care about your clothes and our planet. Our green washing practices use biodegradable detergents and energy-efficient machines that reduce water consumption. We partner with local sustainable initiatives and use electric vehicles for deliveries. Feel good knowing that every load you send helps support a cleaner, healthier environment for future generations.', icon: '🌿' },
+                    { title: 'Ready to Get Started?', text: 'Join thousands of satisfied customers who have already transformed their laundry routine. Download our app today and enjoy your first order with a special welcome discount. Let us prove how easy, convenient, and delightful laundry day can truly be. Your free time is waiting, and so are we. Welcome to the future of laundry care.', icon: '🚀' }
+                ]
+            },
+
+            // Dynamic Palette based on requirements
+            // Hint of Green: #e4fde1
+            // De York: #8acb88
+            // Aqua Forest: #519872
+            // Mineral Green: #3b5249
+            // Celtic: #1b3022
+
+            // Themes rotate for contrast
+            pageThemes: [
+                { bg: '#e4fde1', surface: '#e4fde1', text: '#1b3022', accent: '#3b5249' }, // Light Green BG -> Dark Text
+                { bg: '#3b5249', surface: '#3b5249', text: '#e4fde1', accent: '#8acb88' }, // Dark Mineral BG -> Light Text
+                { bg: '#e4fde1', surface: '#e4fde1', text: '#1b3022', accent: '#519872' }, // Light BG -> Dark Text (Accent Aqua)
+                { bg: '#1b3022', surface: '#1b3022', text: '#e4fde1', accent: '#8acb88' }, // Dark Celtic BG -> Light Text
+                { bg: '#8acb88', surface: '#8acb88', text: '#1b3022', accent: '#1b3022' }, // De York BG -> Dark Text
+                { bg: '#e4fde1', surface: '#e4fde1', text: '#1b3022', accent: '#3b5249' }, // Repeat Light
+                { bg: '#3b5249', surface: '#3b5249', text: '#e4fde1', accent: '#8acb88' }  // Repeat Dark
             ],
 
-            pageThemes: [
-                { bg: '#e0f2fe', surface: '#bae6fd', text: '#0c4a6e', accent: '#0284c7' }, // Page 1: Sky Blue
-                { bg: '#f3e8ff', surface: '#e9d5ff', text: '#581c87', accent: '#9333ea' }, // Page 2: Purple
-                { bg: '#dcfce7', surface: '#bbf7d0', text: '#14532d', accent: '#16a34a' }, // Page 3: Green
-                { bg: '#ffedd5', surface: '#fed7aa', text: '#7c2d12', accent: '#ea580c' }, // Page 4: Orange
-                { bg: '#ffe4e6', surface: '#fecdd3', text: '#881337', accent: '#e11d48' }, // Page 5: Rose
-                { bg: '#ccfbf1', surface: '#99f6e4', text: '#134e4a', accent: '#0d9488' }, // Page 6: Teal
-                { bg: '#e0e7ff', surface: '#c7d2fe', text: '#312e81', accent: '#4f46e5' }  // Page 7: Indigo
-            ],
+            get pages() {
+                // SDK Fallback Logic
+                if (window.elementSdk && window.elementSdk.config && window.elementSdk.config.pages) {
+                    return window.elementSdk.config.pages;
+                }
+                return this.defaultConfig.pages;
+            },
 
             init() {
                 this.currentPage = 0;
                 this.renderSlides();
                 this.renderDots();
-                this.updateUI();
+                this.updateUI(); // Applies initial colors
                 this.setupSwipeHandlers();
             },
 
-            reset() {
-                this.currentPage = 0;
-            },
-
-            createSlide(page, index, theme) {
+            createSlide(page) {
+                // Uses global theme CSS classes (.info-card)
                 return `
                  <div class="slide" style="min-width: 100%;"> 
-                    <div style="max-width: 500px; text-align: center; padding: 0 16px;">
-                        <div style="background: rgba(255,255,255,0.4); backdrop-filter: blur(12px); border-radius: 24px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.2);">
-                            <h2 class="info-title" style="font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 24px; color: ${theme.text}; font-weight: 700; margin-bottom: 12px; transition: color 0.5s ease;">${page.title}</h2>
-                            <p class="info-text" style="font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; color: ${theme.text}; line-height: 1.7; opacity: 0.9; transition: color 0.5s ease;">${page.text}</p>
+                    <div style="max-width: 500px; text-align: center; padding: 0 20px;">
+                        <div class="info-card">
+                            <h2 class="info-title">${page.title}</h2>
+                            <p class="info-text">${page.text}</p>
                         </div>
                     </div>
                  </div>`;
@@ -2340,190 +2604,171 @@
             renderSlides() {
                 const slider = document.getElementById('info-slider');
                 if (!slider) return;
-                slider.innerHTML = this.pages.map((page, index) => this.createSlide(page, index, this.pageThemes[index])).join('');
+                slider.innerHTML = this.pages.map((page, index) => this.createSlide(page)).join('');
             },
 
             renderDots() {
                 const dotsContainer = document.getElementById('info-dots');
                 if (!dotsContainer) return;
+                // Just empty dots initially, style updated in updateUI
                 dotsContainer.innerHTML = this.pages.map((_, index) => `
                     <button class="info-dot" onclick="infoSlider.goTo(${index})"
-                        style="width: 12px; height: 12px; border-radius: 50%; border: none; background: #0284c7; cursor: pointer; transition: all 0.3s;"
+                        style="width: 12px; height: 12px; border-radius: 50%; border: none; cursor: pointer; transition: all 0.3s;"
                         aria-label="Go to slide ${index + 1}"></button>
                 `).join('');
             },
 
-            updateUI() {
+            updateSlidePosition() {
                 const slider = document.getElementById('info-slider');
-                if (!slider) return;
+                if (slider) {
+                    slider.style.transform = `translateX(-${this.currentPage * 100}%)`;
+                }
+                this.updateUI();
+            },
 
-                const theme = this.pageThemes[this.currentPage];
-                const totalPages = this.pages.length;
+            updateUI() {
+                // Simplified Update UI: Relies on global CSS variables now.
+                // We mainly just update functionality or non-color attributes here.
 
-                // Update slider position
-                slider.style.transform = `translateX(-${this.currentPage * 100}%)`;
-
-                // Update container
+                // Update Container Background - Reset to use CSS variable
                 const container = document.getElementById('info-app-container');
                 if (container) {
-                    container.style.background = theme.bg;
-                    container.style.transition = 'background 0.5s ease';
+                    container.style.background = 'var(--bg-body)';
                 }
 
-                // Update Header
+                // Update Header - Reset styles
                 const header = document.getElementById('info-header');
                 if (header) {
-                    header.style.background = theme.surface;
-                    header.style.transition = 'background 0.5s ease';
+                    header.style.background = 'var(--bg-body)';
+                    header.style.borderColor = 'var(--border-color)';
 
                     const h2 = header.querySelector('h2');
-                    if (h2) h2.style.color = theme.text;
-
+                    if (h2) h2.style.color = 'var(--text-main)';
                     const backBtn = header.querySelector('.back-btn');
-                    if (backBtn) backBtn.style.color = theme.text;
+                    if (backBtn) backBtn.style.color = 'var(--text-main)';
                 }
 
                 // Update Footer
                 const footer = document.getElementById('info-footer');
                 if (footer) {
-                    footer.style.background = theme.surface;
-                    footer.style.transition = 'background 0.5s ease';
+                    footer.style.background = 'var(--bg-body)';
+                    footer.style.borderColor = 'var(--border-color)';
                 }
 
-                // Update Slide Text Colors (Transition effect)
-                const slides = document.querySelectorAll('.slide');
-                slides.forEach(slide => {
-                    const title = slide.querySelector('.info-title');
-                    const text = slide.querySelector('.info-text');
-                    if (title) title.style.color = theme.text;
-                    if (text) text.style.color = theme.text;
-                });
-
-                // Update dots
+                // Update Dots - Active dot uses primary action color
                 const dots = document.querySelectorAll('.info-dot');
                 dots.forEach((dot, index) => {
                     if (index === this.currentPage) {
-                        dot.classList.add('active');
-                        dot.style.background = theme.accent;
+                        dot.style.background = 'var(--primary-action)';
                         dot.style.opacity = '1';
                     } else {
-                        dot.classList.remove('active');
-                        dot.style.background = theme.text;
+                        dot.style.background = 'var(--text-sub)';
                         dot.style.opacity = '0.3';
                     }
                 });
 
-                // Update navigation buttons
+                // Update Arrows
                 const prevBtn = document.getElementById('info-prev-btn');
                 const nextBtn = document.getElementById('info-next-btn');
-
-                if (prevBtn) {
-                    prevBtn.style.color = theme.accent;
-                    prevBtn.style.opacity = this.currentPage === 0 ? '0.3' : '1';
-                    prevBtn.disabled = this.currentPage === 0;
-                }
-
-                if (nextBtn) {
-                    nextBtn.style.color = theme.accent;
-                    nextBtn.style.opacity = this.currentPage === totalPages - 1 ? '0.3' : '1';
-                    nextBtn.disabled = this.currentPage === totalPages - 1;
-                }
+                if (prevBtn) prevBtn.style.color = 'var(--primary-action)';
+                if (nextBtn) nextBtn.style.color = 'var(--primary-action)';
             },
+
 
             next() {
                 if (this.currentPage < this.pages.length - 1) {
                     this.currentPage++;
-                    this.updateUI();
-                    if (navigator.vibrate) navigator.vibrate(15);
+                    this.updateSlidePosition();
                 }
             },
 
             prev() {
                 if (this.currentPage > 0) {
                     this.currentPage--;
-                    this.updateUI();
-                    if (navigator.vibrate) navigator.vibrate(15);
+                    this.updateSlidePosition();
                 }
             },
 
             goTo(index) {
                 if (index >= 0 && index < this.pages.length) {
                     this.currentPage = index;
-                    this.updateUI();
-                    if (navigator.vibrate) navigator.vibrate(15);
+                    this.updateSlidePosition();
                 }
             },
 
+            // Interaction Handlers (Swipe & Click)
             setupSwipeHandlers() {
-                const slider = document.getElementById('info-slider');
-                if (!slider) return;
+                const container = document.getElementById('info-app-container');
+                if (!container) return;
 
                 let startX = 0;
-                let currentX = 0;
+                let startY = 0;
                 let isDragging = false;
-                let lastTouchTime = 0;
+                let lastTouchTime = 0; // Flag to ignore mouse events after touch
 
                 const handleStart = (e) => {
-                    if (e.type === 'mousedown' && (Date.now() - lastTouchTime < 1000)) return;
-                    if (e.type === 'touchstart') lastTouchTime = Date.now();
+                    // Ignore if touching a button or interactive element
+                    if (e.target.closest('button') || e.target.closest('.info-dot')) {
+                        return;
+                    }
 
+                    // Ignore mouse events if a touch recently happened (within 800ms)
+                    if (e.type.includes('mouse') && Date.now() - lastTouchTime < 800) return;
+
+                    if (e.type === 'touchstart') {
+                        lastTouchTime = Date.now();
+                        startX = e.touches[0].clientX;
+                        startY = e.touches[0].clientY;
+                    } else {
+                        startX = e.clientX;
+                        startY = e.clientY;
+                    }
                     isDragging = true;
-                    startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
-                    slider.style.transition = 'none';
-                };
-
-                const handleMove = (e) => {
-                    if (!isDragging) return;
-                    currentX = e.type.includes('mouse') ? e.pageX : (e.touches && e.touches[0] ? e.touches[0].pageX : currentX);
-                    const diff = currentX - startX;
-                    // Provide resistance or free scrolling
-                    slider.style.transform = `translateX(calc(-${this.currentPage * 100}% + ${diff}px))`;
                 };
 
                 const handleEnd = (e) => {
                     if (!isDragging) return;
                     isDragging = false;
-                    const diff = currentX - startX;
-                    slider.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
 
-                    // Swipe threshold
-                    if (Math.abs(diff) > 50) {
-                        if (diff > 0 && this.currentPage > 0) {
-                            this.prev();
-                        } else if (diff < 0 && this.currentPage < this.pages.length - 1) {
-                            this.next();
-                        } else {
-                            this.updateUI(); // Reset position
-                        }
+                    // Ignore mouse events if a touch recently happened
+                    if (e.type.includes('mouse') && Date.now() - lastTouchTime < 800) return;
+
+                    let endX = 0;
+                    let endY = 0;
+
+                    if (e.type.includes('mouse')) {
+                        endX = e.clientX;
+                        endY = e.clientY;
+                    } else {
+                        endX = e.changedTouches[0].clientX;
+                        endY = e.changedTouches[0].clientY;
                     }
-                    // Tap detection (minimal movement)
-                    else if (Math.abs(diff) < 15) {
+
+                    const diffX = endX - startX;
+                    const diffY = endY - startY;
+
+                    // Tap Detection (< 15px movement)
+                    if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15) {
                         const screenWidth = window.innerWidth;
-                        const clickX = startX; // approximate tap location
-
                         // Left 40% -> Previous
-                        if (clickX < screenWidth * 0.4) {
+                        if (startX < screenWidth * 0.4) {
                             this.prev();
-                        }
-                        // Right 40% -> Next ( > 60%)
-                        else if (clickX > screenWidth * 0.6) {
+                        } else {
+                            // Right 60% -> Next
                             this.next();
                         }
-                        else {
-                            this.updateUI();
-                        }
                     }
-                    else {
-                        this.updateUI(); // Reset position
+                    // Swipe Detection (> 50px)
+                    else if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                        if (diffX > 0) this.prev();
+                        else this.next();
                     }
                 };
 
-                slider.addEventListener('mousedown', handleStart);
-                slider.addEventListener('touchstart', handleStart, { passive: true });
-                document.addEventListener('mousemove', handleMove);
-                document.addEventListener('touchmove', handleMove, { passive: true });
-                document.addEventListener('mouseup', handleEnd);
-                document.addEventListener('touchend', handleEnd);
+                container.onmousedown = handleStart;
+                container.ontouchstart = handleStart;
+                container.onmouseup = handleEnd;
+                container.ontouchend = handleEnd;
             }
         };
 
@@ -2619,18 +2864,16 @@
             },
             switchView: (viewName, addHistory = true) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+
+                const targetView = document.getElementById('view-' + viewName);
+                if (targetView) {
+                    targetView.classList.add('active');
+                }
+
                 if (viewName === 'home') {
-                    document.getElementById('view-home').classList.add('active');
-                    homeApp.navTo('home', false); // Don't add history here, handled by wrapper if needed
+                    homeApp.navTo('home', false);
                 } else if (viewName === 'orders') {
-                    document.getElementById('view-orders').classList.add('active');
                     if (typeof ordersApp !== 'undefined') ordersApp.init();
-                } else if (viewName === 'account') {
-                    document.getElementById('view-account').classList.add('active');
-                } else if (viewName === 'login') {
-                    document.getElementById('view-login').classList.add('active');
-                } else if (viewName === 'info') {
-                    document.getElementById('view-info').classList.add('active');
                 }
 
                 if (addHistory) {
@@ -3428,6 +3671,7 @@
         // --- 3. INIT LOGIC ---
         // Ensure DOM is ready before starting
         document.addEventListener('DOMContentLoaded', () => {
+            themeApp.init(); // Initialize Theme
             homeApp.init();
             swipeHandler.init(); // Initialize swipe gestures
             historyManager.init(); // Initialize back button support
