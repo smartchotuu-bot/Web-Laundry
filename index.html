@@ -13,7 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
 
     <style>
         /* --- COLORHUNT PALETTE THEME --- */
@@ -1700,8 +1700,7 @@
             navigation: auto;
         }
     </style>
-    <meta name="google-signin-client_id"
-        content="52172689456-2dbt6rvlruem76qgp8orb8s07l92d4ra.apps.googleusercontent.com">
+
 </head>
 
 <body data-theme="light">
@@ -2042,6 +2041,21 @@
                         </div>
                     </div>
 
+                    <div id="locked-profile-state" class="hidden" style="text-align: center; padding: 20px 0;">
+                        <div
+                            style="width: 60px; height: 60px; background: rgba(0,0,0,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                            <i class="fas fa-lock" style="font-size: 24px; color: var(--text-sub);"></i>
+                        </div>
+                        <div class="pc-name" style="margin-bottom: 8px;">Profile Locked</div>
+                        <div class="pc-phone" style="margin-bottom: 20px;">
+                            Please login to view your profile
+                        </div>
+                        <button class="btn-primary" onclick="accountApp.goToLogin()"
+                            style="width: auto; padding: 12px 32px; border-radius: 50px;">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Login
+                        </button>
+                    </div>
+
                     <div class="edit-form-overlay hidden" id="edit-form-container" style="margin-top:15px;">
                         <div class="login-input-group">
                             <label class="login-label">Full Name</label>
@@ -2376,25 +2390,7 @@
             appId: "1:52172689456:web:92eaf5189d9288b2c85df5"
         };
 
-        // --- GOOGLE ONE TAP HANDLER ---
-        window.handleCredentialResponse = (response) => {
-            // 1. Get ID token
-            const idToken = response.credential;
 
-            // 2. Create Firebase credential
-            const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-
-            // 3. Sign in with credential
-            firebase.auth().signInWithCredential(credential)
-                .then((result) => {
-                    console.log("One Tap Sign In Success");
-                    // Existing onAuthStateChanged listener will handle the rest (user check & redirect)
-                    accountApp.showToast("Signed in with Google One Tap");
-                })
-                .catch((error) => {
-                    console.error("One Tap Error:", error);
-                });
-        };
 
         // Initialize Firebase with safety check
         try {
@@ -2491,6 +2487,29 @@
                 document.getElementById('theme-toggle-check').checked = (newTheme === 'dark');
                 const textEl = document.querySelector('[data-key="themeSub"]');
                 if (textEl) textEl.innerText = newTheme === 'dark' ? 'Dark Mode' : 'Light Mode';
+            },
+            goToLogin() {
+                globalNav.switchView('landing');
+            },
+            updateProfileVisibility(isLoggedIn) {
+                const staticInfo = document.getElementById('static-info');
+                const lockedState = document.getElementById('locked-profile-state');
+                const editFab = document.querySelector('.pc-edit-fab');
+                const logoutRow = document.querySelector('[onclick="landingApp.confirmLogout()"]');
+
+                if (isLoggedIn) {
+                    // Show profile data
+                    if (staticInfo) staticInfo.classList.remove('hidden');
+                    if (lockedState) lockedState.classList.add('hidden');
+                    if (editFab) editFab.style.display = 'flex';
+                    if (logoutRow) logoutRow.style.display = 'flex';
+                } else {
+                    // Show locked state
+                    if (staticInfo) staticInfo.classList.add('hidden');
+                    if (lockedState) lockedState.classList.remove('hidden');
+                    if (editFab) editFab.style.display = 'none';
+                    if (logoutRow) logoutRow.style.display = 'none';
+                }
             }
         };
 
@@ -2821,26 +2840,12 @@
                 });
             },
             handleGoogleAuth: () => {
-                // Force One Tap Prompt (Small Popup)
-                if (window.google) {
-                    // Reset cooldown to ensure it shows
-                    document.cookie = 'g_state=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-
-                    google.accounts.id.prompt((notification) => {
-                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                            console.log("One Tap skipped/not displayed. Reason: ", notification.getSkippedReason());
-                            // Only fallback if absolutely necessary, but try to rely on One Tap primarily as requested
-                            accountApp.showToast("Please ensure third-party cookies are enabled or try again.");
-                        }
+                auth.signInWithPopup(provider)
+                    .then((result) => { console.log("Google Sign In Success"); })
+                    .catch((error) => {
+                        console.error("Auth Error:", error);
+                        accountApp.showToast("Login Failed: " + error.message);
                     });
-                } else {
-                    auth.signInWithPopup(provider)
-                        .then((result) => { console.log("Google Sign In Success"); })
-                        .catch((error) => {
-                            console.error("Auth Error:", error);
-                            accountApp.showToast("Login Failed: " + error.message);
-                        });
-                }
             },
             confirmLogout: () => { document.getElementById('logoutModal').style.display = 'flex'; },
             performLogout: () => {
@@ -3724,21 +3729,15 @@
                         console.log("User detected:", user.uid);
                         landingApp.checkDbAndRedirect(user);
                         homeApp.fetchPinnedItems();
+                        // Update profile to show user is logged in
+                        accountApp.updateProfileVisibility(true);
                     } else {
                         console.log("No user signed in.");
                         homeApp.data.pinnedMap = {};
                         homeApp.renderProducts();
+                        // Update profile to show locked state
+                        accountApp.updateProfileVisibility(false);
 
-                        // Initialize Google One Tap ONLY when needed (programmatically)
-                        // But we want it available for the landing page button
-                        if (window.google) {
-                            google.accounts.id.initialize({
-                                client_id: "52172689456-2dbt6rvlruem76qgp8orb8s07l92d4ra.apps.googleusercontent.com",
-                                callback: handleCredentialResponse,
-                                auto_select: true,
-                                use_fedcm_for_prompt: true
-                            });
-                        }
                     }
                 });
             }
