@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="origin-when-cross-origin">
     <title>Laundry Express</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -12,6 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
         /* --- COLORHUNT PALETTE THEME --- */
@@ -1698,13 +1700,15 @@
             navigation: auto;
         }
     </style>
+    <meta name="google-signin-client_id"
+        content="52172689456-2dbt6rvlruem76qgp8orb8s07l92d4ra.apps.googleusercontent.com">
 </head>
 
 <body data-theme="light">
 
 
 
-    <div id="view-landing" class="view-section active">
+    <div id="view-landing" class="view-section">
         <div class="landing-container">
             <div class="logo-box">
                 <img src="logo.png" alt="Laundry Express Logo" class="logo-img-landing"
@@ -1870,7 +1874,7 @@
         </div>
     </div>
 
-    <div id="view-home" class="view-section">
+    <div id="view-home" class="view-section active">
 
         <div id="screen-products">
             <div class="header">
@@ -2014,76 +2018,57 @@
                 <span>Account</span>
             </div>
 
-            <!-- Content when logged in -->
-            <div id="logged-in-content">
-                <div class="profile-card-new" style="overflow:visible">
-                    <div class="pc-banner">
-                        <div class="pc-edit-fab" onclick="accountApp.enableEdit()">
-                            <i class="fas fa-pencil-alt"></i>
+            <div class="profile-card-new" style="overflow:visible">
+                <div class="pc-banner">
+                    <div class="pc-edit-fab" onclick="accountApp.enableEdit()">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                </div>
+
+                <div class="pc-content">
+                    <div class="pc-avatar-new">
+                        <i class="far fa-user"></i>
+                    </div>
+
+                    <div id="static-info">
+                        <div class="pc-name" id="display-name">Loading...</div>
+                        <div class="pc-phone">
+                            <i class="fas fa-phone-alt" style="font-size:11px; opacity:0.7;"></i>
+                            <span id="display-phone">Loading...</span>
+                        </div>
+                        <div class="pc-phone" style="margin-top:6px; font-size:12px;">
+                            <i class="fas fa-map-marker-alt" style="font-size:11px; opacity:0.7;"></i>
+                            <span id="display-address">Loading...</span>
                         </div>
                     </div>
 
-                    <div class="pc-content">
-                        <div class="pc-avatar-new">
-                            <i class="far fa-user"></i>
+                    <div class="edit-form-overlay hidden" id="edit-form-container" style="margin-top:15px;">
+                        <div class="login-input-group">
+                            <label class="login-label">Full Name</label>
+                            <input class="login-input" type="text" id="inpName">
                         </div>
-
-                        <div id="static-info">
-                            <div class="pc-name" id="display-name">Loading...</div>
-                            <div class="pc-phone">
-                                <i class="fas fa-phone-alt" style="font-size:11px; opacity:0.7;"></i>
-                                <span id="display-phone">Loading...</span>
-                            </div>
-                            <div class="pc-phone" style="margin-top:6px; font-size:12px;">
-                                <i class="fas fa-map-marker-alt" style="font-size:11px; opacity:0.7;"></i>
-                                <span id="display-address">Loading...</span>
-                            </div>
+                        <div class="login-input-group">
+                            <label class="login-label">Phone</label>
+                            <input class="login-input" type="tel" id="inpPhone">
                         </div>
-
-                        <div class="edit-form-overlay hidden" id="edit-form-container" style="margin-top:15px;">
-                            <div class="login-input-group">
-                                <label class="login-label">Full Name</label>
-                                <input class="login-input" type="text" id="inpName">
+                        <div class="login-input-group">
+                            <label class="login-label">Address</label>
+                            <div class="area-input-wrapper">
+                                <input class="login-input" type="text" id="inpLoc" autocomplete="off">
+                                <div class="area-suggestions" id="accountAreaSuggestions"></div>
                             </div>
-                            <div class="login-input-group">
-                                <label class="login-label">Phone</label>
-                                <input class="login-input" type="tel" id="inpPhone">
-                            </div>
-                            <div class="login-input-group">
-                                <label class="login-label">Address</label>
-                                <div class="area-input-wrapper">
-                                    <input class="login-input" type="text" id="inpLoc" autocomplete="off">
-                                    <div class="area-suggestions" id="accountAreaSuggestions"></div>
-                                </div>
-                                <div class="error-message" id="accountAreaError">Service not available in this area
-                                </div>
-                            </div>
-                            <div class="login-input-group">
-                                <label class="login-label">Landmark</label>
-                                <input class="login-input" type="text" id="inpLand">
-                            </div>
-                            <div class="action-btns" id="actionPanel" style="display:flex; gap:10px;">
-                                <button class="btn-cancel" onclick="accountApp.cancelEdit()">Cancel</button>
-                                <button class="btn-save" onclick="accountApp.confirmSave()">Save</button>
-                            </div>
+                            <div class="error-message" id="accountAreaError">Service not available in this area</div>
+                        </div>
+                        <div class="login-input-group">
+                            <label class="login-label">Landmark</label>
+                            <input class="login-input" type="text" id="inpLand">
+                        </div>
+                        <div class="action-btns" id="actionPanel" style="display:flex; gap:10px;">
+                            <button class="btn-cancel" onclick="accountApp.cancelEdit()">Cancel</button>
+                            <button class="btn-save" onclick="accountApp.confirmSave()">Save</button>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Content when logged out -->
-            <div id="logged-out-content" class="hidden" style="text-align:center; padding:80px 30px;">
-                <i class="fas fa-user-circle"
-                    style="font-size:80px; color:var(--text-sub); opacity:0.3; margin-bottom:20px;"></i>
-                <h3 style="font-size:18px; font-weight:600; color:var(--text-main); margin-bottom:10px;">Not Logged In
-                </h3>
-                <p style="font-size:13px; color:var(--text-sub); margin-bottom:25px;">Please log in to view your account
-                    details and manage
-                    your profile.</p>
-                <button class="btn-primary" onclick="globalNav.switchView('landing')"
-                    style="max-width:280px; margin:0 auto; padding:14px 24px; border-radius:50px; font-size:14px; font-weight:600; border:none; cursor:pointer; background:var(--primary-action); color:var(--primary-action-text); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;">
-                    Login
-                </button>
             </div>
 
             <div class="settings-card">
@@ -2391,6 +2376,26 @@
             appId: "1:52172689456:web:92eaf5189d9288b2c85df5"
         };
 
+        // --- GOOGLE ONE TAP HANDLER ---
+        window.handleCredentialResponse = (response) => {
+            // 1. Get ID token
+            const idToken = response.credential;
+
+            // 2. Create Firebase credential
+            const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+
+            // 3. Sign in with credential
+            firebase.auth().signInWithCredential(credential)
+                .then((result) => {
+                    console.log("One Tap Sign In Success");
+                    // Existing onAuthStateChanged listener will handle the rest (user check & redirect)
+                    accountApp.showToast("Signed in with Google One Tap");
+                })
+                .catch((error) => {
+                    console.error("One Tap Error:", error);
+                });
+        };
+
         // Initialize Firebase with safety check
         try {
             if (typeof firebase !== 'undefined') {
@@ -2398,10 +2403,6 @@
                 var auth = firebase.auth();
                 var db = firebase.database();
                 var provider = new firebase.auth.GoogleAuthProvider();
-                // Force account selection to show all Google accounts on device
-                provider.setCustomParameters({
-                    prompt: 'select_account'
-                });
             } else {
                 console.error("Firebase SDK not loaded");
                 alert("Error loading app resources. Please check internet connection.");
@@ -2820,16 +2821,26 @@
                 });
             },
             handleGoogleAuth: () => {
-                const btn = document.querySelector('.btn-google');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Signing in...';
-                auth.signInWithPopup(provider)
-                    .then((result) => { console.log("Google Sign In Success"); })
-                    .catch((error) => {
-                        console.error("Auth Error:", error);
-                        accountApp.showToast("Login Failed: " + error.message);
-                        btn.innerHTML = originalText;
+                // Force One Tap Prompt (Small Popup)
+                if (window.google) {
+                    // Reset cooldown to ensure it shows
+                    document.cookie = 'g_state=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+
+                    google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                            console.log("One Tap skipped/not displayed. Reason: ", notification.getSkippedReason());
+                            // Only fallback if absolutely necessary, but try to rely on One Tap primarily as requested
+                            accountApp.showToast("Please ensure third-party cookies are enabled or try again.");
+                        }
                     });
+                } else {
+                    auth.signInWithPopup(provider)
+                        .then((result) => { console.log("Google Sign In Success"); })
+                        .catch((error) => {
+                            console.error("Auth Error:", error);
+                            accountApp.showToast("Login Failed: " + error.message);
+                        });
+                }
             },
             confirmLogout: () => { document.getElementById('logoutModal').style.display = 'flex'; },
             performLogout: () => {
@@ -2878,16 +2889,6 @@
                         globalNav.loadUserData(userData);
                         accountApp.showToast("Welcome!");
                         if (typeof ordersApp !== 'undefined') ordersApp.init();
-
-                        // Check for post-login redirect
-                        const redirectTo = sessionStorage.getItem('redirectAfterLogin');
-                        if (redirectTo === 'cart') {
-                            sessionStorage.removeItem('redirectAfterLogin');
-                            // Small delay to allow view to load
-                            setTimeout(() => {
-                                homeApp.navTo('cart');
-                            }, 100);
-                        }
                     })
                     .catch((error) => {
                         console.error("Save Error:", error);
@@ -2901,22 +2902,6 @@
                 const targetView = document.getElementById('view-' + viewName);
                 if (targetView) {
                     targetView.classList.add('active');
-                }
-
-                // Handle account view authentication check
-                if (viewName === 'account') {
-                    const loggedInContent = document.getElementById('logged-in-content');
-                    const loggedOutContent = document.getElementById('logged-out-content');
-
-                    if (auth.currentUser) {
-                        // User is logged in - show profile
-                        if (loggedInContent) loggedInContent.classList.remove('hidden');
-                        if (loggedOutContent) loggedOutContent.classList.add('hidden');
-                    } else {
-                        // User is not logged in - show login prompt
-                        if (loggedInContent) loggedInContent.classList.add('hidden');
-                        if (loggedOutContent) loggedOutContent.classList.remove('hidden');
-                    }
                 }
 
                 if (viewName === 'home') {
@@ -3576,11 +3561,9 @@
                 return '₹' + grandTotal;
             },
             placeOrder() {
-                // Check authentication first
-                if (!auth.currentUser) {
+                const user = auth.currentUser;
+                if (!user) {
                     accountApp.showToast("Please login to place order");
-                    // Save current view state before redirecting
-                    sessionStorage.setItem('redirectAfterLogin', 'cart');
                     globalNav.switchView('landing');
                     return;
                 }
@@ -3743,15 +3726,19 @@
                         homeApp.fetchPinnedItems();
                     } else {
                         console.log("No user signed in.");
-                        // Redirect to home page even when not logged in
-                        const landingView = document.getElementById('view-landing');
-                        const homeView = document.getElementById('view-home');
-                        if (landingView && landingView.classList.contains('active')) {
-                            landingView.classList.remove('active');
-                            homeView.classList.add('active');
-                        }
                         homeApp.data.pinnedMap = {};
                         homeApp.renderProducts();
+
+                        // Initialize Google One Tap ONLY when needed (programmatically)
+                        // But we want it available for the landing page button
+                        if (window.google) {
+                            google.accounts.id.initialize({
+                                client_id: "52172689456-2dbt6rvlruem76qgp8orb8s07l92d4ra.apps.googleusercontent.com",
+                                callback: handleCredentialResponse,
+                                auto_select: true,
+                                use_fedcm_for_prompt: true
+                            });
+                        }
                     }
                 });
             }
