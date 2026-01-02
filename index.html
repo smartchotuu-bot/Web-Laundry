@@ -459,8 +459,9 @@
         }
 
         [data-theme="dark"] .login-input {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.1);
+            background: var(--bg-card);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: var(--text-main);
         }
 
         .login-input:focus,
@@ -1618,8 +1619,8 @@
         }
 
         [data-theme="dark"] .area-suggestions {
-            background: rgba(40, 40, 40, 0.95);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: var(--bg-card);
+            border-color: rgba(0, 0, 0, 0.1);
         }
 
         .area-suggestions.show {
@@ -1644,9 +1645,6 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
-        [data-theme="dark"] .area-suggestion-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
 
         .area-suggestion-item.no-results {
             cursor: default;
@@ -3747,4 +3745,5 @@
 </body>
 
 </html>
+
 
