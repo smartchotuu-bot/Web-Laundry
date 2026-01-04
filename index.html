@@ -4015,8 +4015,64 @@
 
         // Support Chat Logic
         const supportChat = {
+            chatId: null,
+            userId: null,
+            messagesListener: null,
+
             open() {
                 globalNav.switchView('help');
+                this.initChat();
+            },
+
+            initChat() {
+                const user = auth.currentUser;
+                if (!user) {
+                    console.error('❌ No user logged in');
+                    accountApp.showToast('Please login to use support chat');
+                    return;
+                }
+
+                this.userId = user.uid;
+                this.chatId = this.userId;
+                console.log('💬 Initializing chat:', this.userId);
+
+                const chatContainer = document.getElementById('chat-messages');
+                chatContainer.innerHTML = `
+                    <div style="display: flex; justify-content: flex-start;">
+                        <div style="background: white; padding: 15px 18px; border-radius: 18px 18px 18px 4px; max-width: 75%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Hi! 👋 Welcome to Laundry Express. How can I help you today?</p>
+                        </div>
+                    </div>
+                `;
+
+                this.loadMessages();
+                this.listenForMessages();
+            },
+
+            loadMessages() {
+                db.ref(`supportChats/${this.chatId}/messages`).once('value').then(snapshot => {
+                    const messages = snapshot.val();
+                    if (messages) {
+                        Object.values(messages).sort((a, b) => a.timestamp - b.timestamp).forEach(msg => {
+                            this.addMessageToUI(msg, false);
+                        });
+                        this.scrollToBottom();
+                    }
+                }).catch(err => console.error('❌ Error:', err));
+            },
+
+            listenForMessages() {
+                if (this.messagesListener) {
+                    db.ref(`supportChats/${this.chatId}/messages`).off('child_added', this.messagesListener);
+                }
+
+                this.messagesListener = db.ref(`supportChats/${this.chatId}/messages`).on('child_added', snapshot => {
+                    const msg = snapshot.val();
+                    if (msg.sender === 'admin') {
+                        this.addMessageToUI(msg, true);
+                        this.scrollToBottom();
+                    }
+                });
             },
 
             sendMessage() {
