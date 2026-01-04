@@ -1459,7 +1459,8 @@
         #toast {
             visibility: hidden;
             min-width: 250px;
-            background-color: #2d3436; /* Dark background */
+            background-color: #2d3436;
+            /* Dark background */
             color: #ffffff;
             text-align: center;
             border-radius: 50px;
@@ -1483,7 +1484,8 @@
         #toast.show {
             visibility: visible;
             opacity: 1;
-             top: 40px; /* Display at top */
+            top: 40px;
+            /* Display at top */
         }
 
         /* Order Success */
@@ -1494,7 +1496,8 @@
             width: 100%;
             height: 100%;
             background: var(--bg-body);
-            z-index: 10001; /* Ensure on top of everything */
+            z-index: 10001;
+            /* Ensure on top of everything */
             display: none;
             flex-direction: column;
             align-items: center;
@@ -1719,11 +1722,13 @@
             justify-content: center;
             transition: opacity 0.5s ease-out, visibility 0.5s;
         }
+
         #splash-screen.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
+
         .splash-logo {
             width: 120px;
             height: 120px;
@@ -1732,13 +1737,16 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             animation: pulseLogo 2s infinite;
         }
+
         @keyframes pulseLogo {
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.05);
             }
+
             100% {
                 transform: scale(1);
             }
@@ -1749,7 +1757,7 @@
 
 <body data-theme="light">
 
-<!-- Splash Screen -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-content">
             <img src="logo.png" alt="Logo" class="splash-logo">
@@ -2176,6 +2184,30 @@
                 </div>
 
 
+                <div class="st-row" onclick="detailsApp.open()">
+                    <div class="st-left" style="display:flex; gap:15px; align-items:center;">
+                        <div class="st-icon-bg" style="background:rgba(251, 191, 36, 0.1); color:#F59E0B"><i
+                                class="fas fa-file-invoice"></i></div>
+                        <div class="st-info">
+                            <h4 style="font-size:14px; font-weight:600;">Details</h4>
+                            <p style="font-size:11px; color:var(--text-sub);">View rates & services</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
+                </div>
+
+                <div class="st-row" onclick="supportChat.open()">
+                    <div class="st-left" style="display:flex; gap:15px; align-items:center;">
+                        <div class="st-icon-bg" style="background:rgba(6, 182, 212, 0.1); color:#06B6D4"><i
+                                class="fas fa-headset"></i></div>
+                        <div class="st-info">
+                            <h4 style="font-size:14px; font-weight:600;">Help</h4>
+                            <p style="font-size:11px; color:var(--text-sub);">Support & Chat</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:var(--text-sub); font-size:12px;"></i>
+                </div>
+
 
                 <div class="st-row" onclick="landingApp.confirmLogout()" style="cursor:pointer">
                     <div class="st-left" style="display:flex; gap:15px; align-items:center;">
@@ -2189,6 +2221,84 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- Details View -->
+    <div id="view-details" class="view-section">
+        <div class="header">
+            <button class="back-btn" onclick="globalNav.switchView('account')"
+                style="border:none; background:none; font-size:18px; color:var(--text-main); margin-right:10px;"><i
+                    class="fas fa-arrow-left"></i></button>
+            <h2 style="color:var(--text-main); font-size: 16px;">Details & Rates</h2>
+            <div style="width: 24px;"></div>
+        </div>
+
+        <div class="tabs" style="padding: 15px 20px; gap: 12px;">
+            <div class="tab active" id="tab-areas" onclick="detailsApp.switchTab('areas')" style="flex: 1;">Areas</div>
+            <div class="tab" id="tab-prices" onclick="detailsApp.switchTab('prices')" style="flex: 1;">Prices</div>
+        </div>
+
+        <div id="details-areas-content" class="app-container">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 15px;">
+                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 15px; color: var(--text-main);">Service
+                    Available Areas</h3>
+                <div id="areas-list"></div>
+            </div>
+        </div>
+
+        <div id="details-prices-content" class="app-container hidden">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 15px;">
+                <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 15px; color: var(--text-main);">Pricing
+                </h3>
+                <div
+                    style="margin-bottom: 20px; background: var(--bg-panel); padding: 12px; border-radius: 12px; display: flex; justify-content: space-around; font-size: 11px; font-weight: 700; color: var(--text-sub);">
+                    <div style="width:40%;">ITEM</div>
+                    <div style="width:20%; text-align:center;">IRON</div>
+                    <div style="width:20%; text-align:center;">WASH</div>
+                    <div style="width:20%; text-align:center;">DRY</div>
+                </div>
+                <div id="prices-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help/Support Chat View -->
+    <div id="view-help" class="view-section">
+        <div class="header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px;">
+            <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
+                <button class="back-btn" onclick="globalNav.switchView('account')"
+                    style="border:none; background:none; font-size:18px; color:var(--text-main);"><i
+                        class="fas fa-arrow-left"></i></button>
+                <h2 style="color:var(--text-main); font-size: 16px; margin: 0;">Support Chat</h2>
+                <div style="width: 24px;"></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; align-self: center; margin-top: -5px;">
+                <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                <span style="font-size: 12px; color: var(--text-sub);">Online</span>
+            </div>
+        </div>
+
+        <div class="app-container" style="flex: 1; overflow-y: auto; padding-bottom: 80px;">
+            <div id="chat-messages" style="display: flex; flex-direction: column; gap: 15px; padding: 20px 0;">
+                <div style="display: flex; justify-content: flex-start;">
+                    <div
+                        style="background: white; padding: 15px 18px; border-radius: 18px 18px 18px 4px; max-width: 75%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                        <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Hi! 👋 Welcome
+                            to Laundry Express. How can I help you today?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-body); padding: 15px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center;">
+            <input type="text" id="chat-input" placeholder="Type a message..."
+                style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 25px; background: var(--bg-panel); color: var(--text-main); font-size: 14px;">
+            <button onclick="supportChat.sendMessage()"
+                style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-action); color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
@@ -3242,8 +3352,12 @@
                 document.getElementById('step2').classList.add('active');
                 document.getElementById('step2Indicator').classList.add('active');
                 document.getElementById('progressFill').style.width = "100%";
-                // Initialize area validation when entering step 2
+                // ⚡ Lazy load areas when entering step 2
                 if (typeof areaValidation !== 'undefined') {
+                    // Initialize areas if not already loaded
+                    if (!areaValidation.availableAreas || areaValidation.availableAreas.length === 0) {
+                        areaValidation.init();
+                    }
                     areaValidation.attach('areaSearch', 'areaSuggestions', 'areaError');
                 }
             },
@@ -3295,19 +3409,48 @@
                 const productsRef = db.ref('products');
                 productsRef.on('value', (snapshot) => {
                     const val = snapshot.val();
+
                     if (!val) {
-                        console.log("No products found in DB");
+                        console.log("❌ No products found in DB");
                         this.data.products = [];
-                    } else if (Array.isArray(val)) {
-                        this.data.products = val;
-                    } else {
-                        // Handle object with numeric keys or random keys
-                        this.data.products = Object.values(val);
+                        accountApp.showToast("No products available");
+                        return;
                     }
-                    console.log("Loaded products:", this.data.products);
+
+                    // Convert Firebase data to array with guaranteed IDs
+                    this.data.products = [];
+
+                    if (Array.isArray(val)) {
+                        // If it's an array, ensure each item has an ID
+                        val.forEach((product, index) => {
+                            if (product) {
+                                // Use product.id if exists, otherwise use index
+                                product.id = product.id || index;
+                                this.data.products.push(product);
+                            }
+                        });
+                    } else {
+                        // If it's an object, use the key as ID
+                        Object.keys(val).forEach(key => {
+                            const product = val[key];
+                            if (product && typeof product === 'object') {
+                                // Ensure ID exists - use Firebase key if product.id is missing
+                                product.id = product.id || key;
+                                this.data.products.push(product);
+                            }
+                        });
+                    }
+
+                    // Debug: Log all product IDs
+                    console.log("📦 Loaded products:", this.data.products.length);
+                    this.data.products.forEach(p => {
+                        console.log(`  → ${p.name}: ID = '${p.id}' (type: ${typeof p.id})`);
+                    });
+
                     this.renderProducts();
                 }, (error) => {
-                    console.error("Error loading products:", error);
+                    console.error("❌ Error loading products:", error);
+                    accountApp.showToast("Failed to load products");
                 });
             },
             navTo(screen, addHistory = true) {
@@ -3440,7 +3583,14 @@
                 const unpinned = visibleProducts.filter(p => !pinnedMap[p.id]);
 
                 const createCard = (p, isPinned) => {
-                    const currentQty = this.data.tempSelection[p.id] || 0;
+                    // Ensure product has an ID
+                    if (!p.id) {
+                        console.error('❌ Product missing ID:', p);
+                        p.id = Math.random().toString(36).substr(2, 9); // Generate random ID
+                    }
+
+                    const productId = String(p.id);
+                    const currentQty = this.data.tempSelection[productId] || 0;
                     const card = document.createElement('div');
                     card.className = `product-card ${isPinned ? 'pinned' : ''}`;
 
@@ -3467,12 +3617,12 @@
                                 <img src="${p.img}" class="prod-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                 <i class="fas ${p.icon} prod-img-fallback"></i>
                             </div>
-                            <div class="prod-details"><h3>${p.name}</h3><p>Premium Care</p></div>
+                            <div class="prod-details"><h3>${p.name}</h3><p>${p.description || 'Premium Care'}</p></div>
                         </div>
                         <div class="counter">
-                            <div class="btn-count" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="homeApp.updateTemp(${p.id}, -1)">−</div>
+                            <div class="btn-count" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="homeApp.updateTemp('${p.id}', -1)">−</div>
                             <span class="count-val">${currentQty}</span>
-                            <div class="btn-count active" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="homeApp.updateTemp(${p.id}, 1)">+</div>
+                            <div class="btn-count active" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="homeApp.updateTemp('${p.id}', 1)">+</div>
                         </div>`;
                     return card;
                 };
@@ -3493,10 +3643,24 @@
                 this.updateFloatingBar();
             },
             updateTemp(id, change) {
+                // Convert to string for consistency
+                const productId = String(id);
+
+                console.log(`🔄 updateTemp called: ID='${productId}', change=${change}`);
+
                 if (navigator.vibrate) navigator.vibrate(20);
-                if (!this.data.tempSelection[id]) this.data.tempSelection[id] = 0;
-                this.data.tempSelection[id] += change;
-                if (this.data.tempSelection[id] <= 0) delete this.data.tempSelection[id];
+
+                if (!this.data.tempSelection[productId]) {
+                    this.data.tempSelection[productId] = 0;
+                }
+
+                this.data.tempSelection[productId] += change;
+
+                if (this.data.tempSelection[productId] <= 0) {
+                    delete this.data.tempSelection[productId];
+                }
+
+                console.log('📊 Current selection:', this.data.tempSelection);
                 this.renderProducts();
             },
             updateFloatingBar() {
@@ -3763,6 +3927,129 @@
             }
         };
 
+
+        // Details App Logic
+        const detailsApp = {
+            currentTab: 'areas',
+
+            open() {
+                globalNav.switchView('details');
+                this.loadAreas();
+                this.loadPrices();
+            },
+
+            switchTab(tab) {
+                this.currentTab = tab;
+                document.querySelectorAll('#view-details .tab').forEach(t => t.classList.remove('active'));
+                if (tab === 'areas') {
+                    document.getElementById('tab-areas').classList.add('active');
+                    document.getElementById('details-areas-content').classList.remove('hidden');
+                    document.getElementById('details-prices-content').classList.add('hidden');
+                } else {
+                    document.getElementById('tab-prices').classList.add('active');
+                    document.getElementById('details-prices-content').classList.remove('hidden');
+                    document.getElementById('details-areas-content').classList.add('hidden');
+                }
+            },
+
+            loadAreas() {
+                const areasList = document.getElementById('areas-list');
+
+                // ⚡ Lazy load: Initialize areas if not already loaded
+                if (typeof areaValidation !== 'undefined' && (!areaValidation.availableAreas || areaValidation.availableAreas.length === 0)) {
+                    areasList.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:13px;">Loading areas...</p>';
+                    areaValidation.init();
+                    // Wait a bit for areas to load, then render
+                    setTimeout(() => this.renderAreas(), 500);
+                    return;
+                }
+
+                this.renderAreas();
+            },
+
+            renderAreas() {
+                const areasList = document.getElementById('areas-list');
+                if (typeof areaValidation !== 'undefined' && areaValidation.availableAreas && areaValidation.availableAreas.length > 0) {
+                    areasList.innerHTML = areaValidation.availableAreas.map(area => `
+                        <div style="padding: 16px 20px; background: white; border-radius: 12px; margin-bottom: 8px; font-weight: 600; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                            ${area}
+                        </div>
+                    `).join('');
+                } else if (typeof db !== 'undefined') {
+                    db.ref('serviceAreas').once('value').then(snapshot => {
+                        const areas = snapshot.val();
+                        if (areas && Array.isArray(areas) && areas.length > 0) {
+                            areasList.innerHTML = areas.map(area => `
+                                <div style="padding: 16px 20px; background: white; border-radius: 12px; margin-bottom: 8px; font-weight: 600; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                                    ${area}
+                                </div>
+                            `).join('');
+                        } else {
+                            areasList.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:13px;">No service areas available</p>';
+                        }
+                    });
+                } else {
+                    areasList.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:13px;">Loading areas...</p>';
+                }
+            },
+
+            loadPrices() {
+                const pricesList = document.getElementById('prices-list');
+                if (typeof homeApp !== 'undefined' && homeApp.data.products && homeApp.data.products.length > 0) {
+                    pricesList.innerHTML = homeApp.data.products.map(product => {
+                        const prices = product.prices || { iron: '-', wash: '-', dry: '-' };
+                        return `
+                            <div style="display: flex; justify-content: space-around; align-items: center; padding: 12px; background: var(--bg-card); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-color);">
+                                <div style="width:40%; font-weight: 600; color: var(--text-main); font-size: 13px;">${product.name}</div>
+                                <div style="width:20%; text-align:center; color: #F59E0B; font-weight: 600; font-size: 12px;">₹${prices.iron || '-'}</div>
+                                <div style="width:20%; text-align:center; color: #10B981; font-weight: 600; font-size: 12px;">₹${prices.wash || '-'}</div>
+                                <div style="width:20%; text-align:center; color: #8B5CF6; font-weight: 600; font-size: 12px;">₹${prices.dry || '-'}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    pricesList.innerHTML = '<p style="text-align:center; color:var(--text-sub); font-size:13px;">Loading prices...</p>';
+                }
+            }
+        };
+
+        // Support Chat Logic
+        const supportChat = {
+            open() {
+                globalNav.switchView('help');
+            },
+
+            sendMessage() {
+                const input = document.getElementById('chat-input');
+                const message = input.value.trim();
+                if (message === '') return;
+
+                const chatMessages = document.getElementById('chat-messages');
+                const userMsg = document.createElement('div');
+                userMsg.style.cssText = 'display: flex; justify-content: flex-end;';
+                userMsg.innerHTML = `
+                    <div style="background: var(--primary-action); padding: 12px 16px; border-radius: 18px 18px 4px 18px; max-width: 70%;">
+                        <p style="margin: 0; font-size: 13px; color: white;">${message}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(userMsg);
+                input.value = '';
+                chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+
+                setTimeout(() => {
+                    const supportMsg = document.createElement('div');
+                    supportMsg.style.cssText = 'display: flex; justify-content: flex-start;';
+                    supportMsg.innerHTML = `
+                        <div style="background: white; padding: 15px 18px; border-radius: 18px 18px 18px 4px; max-width: 75%; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <p style="margin: 0; font-size: 13px; color: var(--text-main); line-height: 1.5;">Thank you for your message. Our support team will assist you shortly!</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(supportMsg);
+                    chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+                }, 1000);
+            }
+        };
+
         // --- 3. INIT LOGIC ---
         // Ensure DOM is ready before starting
         document.addEventListener('DOMContentLoaded', () => {
@@ -3770,7 +4057,8 @@
             homeApp.init();
             swipeHandler.init(); // Initialize swipe gestures
             historyManager.init(); // Initialize back button support
-            if (typeof areaValidation !== 'undefined') areaValidation.init(); // Fetch areas for validation
+            // ⚡ Optimization: Load areas only when needed (lazy loading)
+            // if (typeof areaValidation !== 'undefined') areaValidation.init();
 
             if (typeof auth !== 'undefined') {
                 auth.onAuthStateChanged((user) => {
@@ -3793,20 +4081,16 @@
         });
 
         // Splash Screen Logic
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.classList.add('hidden');
-                    // Remove from DOM after transition
-                    setTimeout(() => splash.remove(), 500);
-                }
-            }, 2000);
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('hidden');
+                // Remove from DOM after transition
+                setTimeout(() => splash.remove(), 500);
+            }
+        }, 2000);
 
     </script>
 </body>
 
 </html>
-
-
-
-
